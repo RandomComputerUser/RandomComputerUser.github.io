@@ -1,6 +1,6 @@
 gameLuckyCharm = false;
 gameTime = 600;
-gameLuck = 0.2 * Math.random() - 0.1 + (0.025 * gameLuckyCharm);
+gameLuck = 0.0;
 gameLuckLevel = 0;
 collectTime = 700;
 sleepTime = 2400;
