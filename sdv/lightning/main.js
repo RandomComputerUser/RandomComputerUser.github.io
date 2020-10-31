@@ -170,7 +170,10 @@ function incrementTime() {
 }
 
 function simulateDay(date) {
-    gameLuck = 0.2 * Math.random() - 0.1 + (0.025 * gameLuckyCharm);
+    gameLuck = Math.min(0.1, (Math.floor(201 * Math.random()) - 100) / 1000.0);
+    if (gameLuckyCharm) {
+        gameLuck += 0.025;
+    }
     gameLuckLevel = 0;
     let struck = 0;
     let collected = false;
