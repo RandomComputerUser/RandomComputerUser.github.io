@@ -51,11 +51,7 @@ function getIntegerFromInput(name) {
 
 function simulate(rods=null) {
 
-    initialize();
-
-    if (rods != null) {
-        rodCount = rods;
-    }
+    initialize(rods);
 
     let strikes = 0;
     let yearsWithStrike = 0;
@@ -147,10 +143,14 @@ function csv() {
 
 }
 
-function initialize() {
+function initialize(rods=null) {
     sleepTime = getTimeFromInput('sleepTime');
     collectTime = getTimeFromInput('collectTime');
-    rodCount = getIntegerFromInput('rods');
+    if (rods == null) {
+        rodCount = getIntegerFromInput('rods');
+    } else {
+        rodCount = rods;
+    }
     lightningRods = [];
     for (let i = 0; i < rodCount; i++) {
         lightningRods.push(0);
