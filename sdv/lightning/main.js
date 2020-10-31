@@ -144,6 +144,7 @@ function csv() {
 }
 
 function initialize(rods=null) {
+    gameLuckyCharm = document.getElementById('specialCharm').checked;
     sleepTime = getTimeFromInput('sleepTime');
     collectTime = getTimeFromInput('collectTime');
     if (rods == null) {
