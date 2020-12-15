@@ -36,12 +36,6 @@ try {
 
 }
 
-if (threads === 4) {
-    threads--;
-} else if (threads > 4) {
-    threads -= 2;
-}
-
 document.getElementById('threads').innerText = `${threads}`;
 
 workers = [];
