@@ -12,9 +12,9 @@ for (let i = 0; i <= TRIAL_SIZE; i++) {
     distribution.push(0n);
     let el = document.createElement('span');
     if (i < 10) {
-        el.innerText = `${i} .....`;
+        el.innerText = `${i} ..... `;
     } else if (i < 100) {
-        el.innerText = `${i} ....`;
+        el.innerText = `${i} .... `;
     } else {
         el.innerText = `${i} ... `;
     }
