@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dream Cheating Anaylsis</title>
+    <style>
+        body {
+            margin: auto;
+            padding-top: 2rem;
+            width: 50%;
+            font-size: 1.25rem;
+            font-family: 'Inconsolata', 'Consolas', 'Roboto Mono', 'Courier New', Courier, monospace;
+        }
+    </style>
+</head>
+<body>
+    <span>Total Number of Trials ............. </span><span id="totalTrials"></span><br>
+    <span>Running Average Pearls per Trial ... </span><span id="meanPearls"></span><br>
+    <span>Highest Pearls in a Single Trial ... </span><span id="maxPearls"></span><br>
+    <span>Dream Number of Pearls ............. </span><span>42 (of 262)</span><br>
+    <br>
+    <span>Distribution (number of trials with n pearls or more)</span><br>
+    
+    <script src="worker.js"></script>
+    <script src="main.js"></script>
+</body>
+</html>
