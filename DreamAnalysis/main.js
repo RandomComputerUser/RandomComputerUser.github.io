@@ -103,7 +103,7 @@ function updateDisplay() {
 
 function updateDistribution(e) {
     workerData = e.data;
-    for (let i = 0; i <= TRIAL_SIZE; i++) {
+    for (let i = 0; i <= workerData[workerData.length - 1]; i++) {
         distribution[i] += BigInt(workerData[i]);
     }
 }
