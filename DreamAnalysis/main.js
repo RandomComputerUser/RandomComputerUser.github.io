@@ -36,6 +36,12 @@ try {
 
 }
 
+if (threads === 4) {
+    threads--;
+} else if (threads > 4) {
+    threads -= 2;
+}
+
 workers = [];
 
 for (let i = 0; i < threads; i++) {
