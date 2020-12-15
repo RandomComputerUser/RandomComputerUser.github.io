@@ -42,6 +42,8 @@ if (threads === 4) {
     threads -= 2;
 }
 
+document.getElementById('threads').innerText = `${threads}`;
+
 workers = [];
 
 for (let i = 0; i < threads; i++) {
