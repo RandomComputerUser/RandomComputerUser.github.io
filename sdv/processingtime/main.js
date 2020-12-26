@@ -288,7 +288,9 @@ function setDisplay(data, displayEl) {
     
     displayEl.innerHTML = '';
 
-    if (data.length < 1) return;
+    if (data.length < 1) {
+        displayEl.innerHTML = 'Nothing found';
+    };
 
     if (typeof data[0] === 'string') {
         let list = document.createElement('ul');
