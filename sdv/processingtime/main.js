@@ -149,7 +149,7 @@ function getTimeString(time) {
     time = Math.round(time / 10);
 
     if (time >= 20 * 6) {
-        return 'While Asleep';
+        return 'After 2:00 AM';
     }
 
     let hour = ['6', '7', '8', '9', '10', '11', '12', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '1'][Math.floor(time / 6)];
