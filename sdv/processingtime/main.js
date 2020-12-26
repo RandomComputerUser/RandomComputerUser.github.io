@@ -45,7 +45,6 @@ function openSave() {
 
 function analyzeData(data) {
     data = xmlToJson(parseXml(data));
-    console.log(data);
 
     gameDate = 112 * (data.SaveGame.year - 1);
     let season = (''+data.SaveGame.currentSeason).toLowerCase();
@@ -77,8 +76,6 @@ function analyzeData(data) {
     // console.log(toProcess);
     
     dataToDisplay = generateSummary(toProcess, gameDate);
-
-    console.log(dataToDisplay);
 
     setDisplay(dataToDisplay, document.getElementById("mainDisplay"))
 }
