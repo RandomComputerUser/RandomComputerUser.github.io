@@ -1,4 +1,4 @@
-@import url("../../common.css");
+@import url("common.css");
 
 html, body, input, button {
     font-size: 1.1rem;
@@ -6,7 +6,7 @@ html, body, input, button {
 
 #main {
     margin: auto;
-    width: min(750px, 90%);
+    width: min(850px, 90%);
 }
 
 input[type="text"], input[type="file"] {
@@ -28,7 +28,7 @@ button {
 h2 {
     margin-top: 0;
     font-weight: bold;
-    font-size: 1.8rem;
+    font-size: 1.5rem;
 }
 
 h5 {
@@ -62,7 +62,7 @@ ul {
 }
 
 li {
-    font-size: 0.9rem;
+    font-size: 1rem;
     margin-top: 0.15rem;
     margin-bottom: 0.15rem;
 }

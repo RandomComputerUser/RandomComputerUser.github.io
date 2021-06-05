@@ -1,6 +1,15 @@
-@import url("../common.css");
+@import url("../../common.css");
 
 html, body, * {
     line-height: 150%;
     font-size: 11pt;
+}
+
+body {
+    width: min(1150px, 90%);
+    margin: auto;
+}
+
+h1 {
+    font-size: 1.8rem;
 }
