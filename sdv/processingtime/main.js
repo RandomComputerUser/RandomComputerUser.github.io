@@ -45,7 +45,6 @@ function openSave() {
 
 function analyzeData(data) {
     data = xmlToJson(parseXml(data));
-    console.log(data);
 
     gameDate = 112 * (data.SaveGame.year - 1);
     let season = (''+data.SaveGame.currentSeason).toLowerCase();
@@ -77,8 +76,6 @@ function analyzeData(data) {
     // console.log(toProcess);
     
     dataToDisplay = generateSummary(toProcess, gameDate);
-
-    console.log(dataToDisplay);
 
     setDisplay(dataToDisplay, document.getElementById("mainDisplay"))
 }
@@ -152,7 +149,7 @@ function getTimeString(time) {
     time = Math.round(time / 10);
 
     if (time >= 20 * 6) {
-        return 'While Asleep';
+        return 'After 2:00 AM';
     }
 
     let hour = ['6', '7', '8', '9', '10', '11', '12', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '1'][Math.floor(time / 6)];
@@ -291,7 +288,10 @@ function setDisplay(data, displayEl) {
     
     displayEl.innerHTML = '';
 
-    if (data.length < 1) return;
+    if (data.length < 1) {
+        displayEl.innerHTML = 'Nothing found';
+        return;
+    }
 
     if (typeof data[0] === 'string') {
         let list = document.createElement('ul');
