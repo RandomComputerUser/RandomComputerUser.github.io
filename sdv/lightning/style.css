@@ -1,0 +1,6 @@
+@import url("../common.css");
+
+html, body, * {
+    line-height: 150%;
+    font-size: 11pt;
+}
