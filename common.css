@@ -10,7 +10,6 @@ html, body, .mainfont, :not(.other-font), :not(.monospace) {
     html, body, .mainfont, :not(.other-font), :not(.monospace) {
         font-family: 'Inter var', Tahoma, Verdana, sans-serif;
     }
-    color: red;
 }
 
 .disable-calt {
