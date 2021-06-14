@@ -15,7 +15,9 @@
 
         <h6>Save File</h6>
         <div id="fileInput">
-            <input id="saveInput" type="file" onchange="openSave()">
+            <button onclick="document.getElementById('saveInput').click()">Choose file</button>
+            <input id="saveInput" type="file" style="display:none" onchange="openSave()">
+            <span id="fileDisplay">No file chosen</span>
         </div>
 
         <br>

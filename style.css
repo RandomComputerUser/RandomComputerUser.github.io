@@ -8,19 +8,6 @@ html, body, input, button {
     margin: auto;
     width: min(850px, 90%);
 }
-
-input[type="text"], input[type="file"] {
-    font-size: 1.25rem;
-}
-
-input[type="file"] {
-    width: 100%;
-}
-
-#fontName {
-    width: 35%;
-}
-
 button {
     font-size: 1.4rem;
 }
@@ -41,20 +28,6 @@ h6 {
     font-weight: 600;
     font-size: 1.2rem;
     margin: 0.25rem;
-}
-
-#fileInput, .display {
-    border-left: 1px solid #7f7f7f;
-    padding-left: 5px;
-    padding-top: 5px;
-    margin-top: 5px;
-    margin-bottom: 15px;
-    margin-left: 5px;
-    width: 100%;
-}
-
-button {
-    margin-left: 5px;
 }
 
 ul {

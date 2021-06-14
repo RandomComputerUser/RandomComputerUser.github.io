@@ -26,7 +26,7 @@ VALID_OBJECTS = new Set();
             'Tapper',
             'Heavy Tapper',
             'Worm Bin'
-        ]
+        ];
         for (let i = 0; i < valid.length; i++) {
             VALID_OBJECTS.add(valid[i]);
         }
@@ -40,7 +40,10 @@ function openSave() {
         analyzeData(reader.result);
     }
 
-    reader.readAsText(document.getElementById("saveInput").files[0]);
+    let file = document.getElementById("saveInput").files[0];
+    document.getElementById("fileDisplay").innerHTML = file.name;
+
+    reader.readAsText(file);
 }
 
 function analyzeData(data) {
@@ -298,6 +301,7 @@ function setDisplay(data, displayEl) {
 
         for (let i = 0; i < data.length; i++) {
             let item = document.createElement('li');
+            item.classList.add('disable-calt');
             item.innerHTML = data[i];
             list.appendChild(item);
         }

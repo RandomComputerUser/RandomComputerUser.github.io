@@ -9,16 +9,16 @@ html, body, input, button {
     width: min(750px, 90%);
 }
 
+#fileDisplay {
+    font-size: 1.3rem;
+}
+
 input[type="text"], input[type="file"] {
     font-size: 1.25rem;
 }
 
 input[type="file"] {
     width: 100%;
-}
-
-#fontName {
-    width: 35%;
 }
 
 button {
