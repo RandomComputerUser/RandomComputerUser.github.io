@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Factorio Belt Printer BP</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+    <div id="main">
+        <script type="text/javascript" src="base64.js"></script>
+        <script type="text/javascript" src="pako.min.js"></script>
+        <script type="text/javascript" src="main.js"></script>
+
+        <h1>Factorio Belt Printer BP Generator</h1>
+
+        <br>
+
+        <h6>PNG File</h6>
+        <div class="display" id="fileInput">
+            <button onclick="document.getElementById('imageInput').click()">Choose File</button>
+            <input id="imageInput" type="file" accept=".png" style="display:none" onchange="openImage(event)">
+            <span id="fileDisplay">No File Chosen</span>
+            <br>
+            <br>
+            <ul>
+            <li>The image must be no wider than 128 pixels and no taller than 20 pixels.</li>
+            <li>If the width of the image is not a power of two, the smallest possible power of two that the image can fit into will be used.</li>
+            <li>If the height of the image is odd, an extra row of pixels will be added to the bottom.</li>
+            <li>Please note that a belt has two lanes, with each lane being able to hold four items. This means that you should stretch your image to be twice as wide for it to appear normal ingame.</li>
+            <li>Grayscale and color images can be used, but the quality will be lower.</li>
+            </ul>
+            <br>
+            <p>Sample Image</p>
+            <img src="./FactorioTNR2.png">
+        </div>
+
+        <br>
+
+        <h6>Preview</h6>
+        <div class="display">
+            <canvas id="preview" width="128" height="16"></canvas>
+            <br>
+            <p>The image preview shown here is antialiased. It will not appear as smooth ingame.</p>
+        </div>
+
+        <br>
+        <br>
+
+        <button onclick="createPrinter()">Generate Blueprint (might take a while)</button>
+
+        <br>
+        <br>
+        
+        <textarea id="blueprintOutput" class="monospace"></textarea>
+        <br>
+        <span id="sizeDisplay">0 bytes</span>
+
+        <br>
+        <br>
+        
+        <span>Source on <a href="https://github.com/RandomComputerUser/RandomComputerUser.github.io/tree/main/factorio/belt-printer">GitHub</a></span>
+        <br>
+        <span>Found any bugs? <a href="https://github.com/RandomComputerUser/RandomComputerUser.github.io/issues/new">Open</a> a new issue</span>
+
+    </div>
+
+</body>
+</html>
