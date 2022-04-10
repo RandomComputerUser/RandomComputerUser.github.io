@@ -7,8 +7,12 @@ html, body, input, button {
 }
 
 input[type="text"] {
-    background-color: #d0d0d0;
+    background-color: #e0e0e0;
     color: #081828;
+}
+
+input[type="range"] {
+    width: 25rem;
 }
 
 button {
@@ -23,6 +27,10 @@ button {
 
 .semibold {
     font-weight: 600;
+}
+
+.big {
+    font-size: 1.5rem;
 }
 
 .warning {

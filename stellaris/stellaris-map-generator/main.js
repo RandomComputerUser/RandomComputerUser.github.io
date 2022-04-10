@@ -5,20 +5,24 @@ BACKGROUND_IMAGE.src = document.getElementById('backgroundImage').src;
 
 document.getElementById('galaxyName').value = "The Milky Way";
 
+function updatePaintScaleNumberDisplay(value) {
+    document.getElementById('paintScaleNumberDisplay').innerHTML = ''+(document.getElementById('paintScale').value);
+}
+
 ENTRIES_KEY = '___entries';
 UNOWNED_ID = -1000000000;
 
 MAP_FONT = '"Barlow Semi Condensed"';
-MAP_FONT_WEIGHT = 'bold';
 MAP_NAME_FILL = 'rgba(10,10,10,0.6)';
-MAP_NAME_STROKE = 'rgba(220,220,220,0.5)';
-MAP_NAME_STROKE_WIDTH = 0.21;
+MAP_NAME_STROKE = 'rgba(225,225,225,0.5)';
+MAP_NAME_STROKE_WIDTH = 0.22;
+MAP_NAME_STROKE_WIDTH_ALT = 0.3;
 MIN_MAP_NAME_SIZE = 10;
 
 MAP_MIDDLE_FONT = '"Barlow Semi Condensed"';
 MAP_MIDDLE_TEXT_COLOR = 'rgba(245,245,245,0.85)';
 
-MISSING_COLOR = 'rgb(48,48,48)';
+MISSING_COLOR = 'rgb(64,64,64)';
 
 CANVAS_SCALE = 2;
 
@@ -52,23 +56,25 @@ CAPITAL_STAR_RADIUS = CANVAS_SCALE * 7;
 
 HYPERLANE_WIDTH = CANVAS_SCALE * 3;
 BORDERS = [
-    {color: 'rgba(200,200,200,0.5)', width: CANVAS_SCALE * 12},
-    {color: 'rgb(230,230,230)', width: CANVAS_SCALE * 2}
+    {color: 'rgba(205,205,205,0.5)', width: CANVAS_SCALE * 12},
+    {color: 'rgb(225,225,225)', width: CANVAS_SCALE * 2}
 ];
 EDGE_BORDERS = [
-    {color: 'rgba(20,20,20,0.55)', width: CANVAS_SCALE * 16}
+    {color: 'rgba(5,5,5,0.5)', width: CANVAS_SCALE * 16}
 ];
 
 BACKGROUND_FILTER = 'saturate(0%)';
-BACKGROUND_COLOR = 'rgba(20,20,20,0.75)';
-HYPERLANE_COLOR = 'rgba(230,230,230,0.2)';
-STAR_COLOR = 'rgb(230,230,230)';
-POPULATED_COLOR = 'rgb(240,230,10)';
+SUBSTITUTE_BACKGROUND = 'rgb(2,2,2)'; // If no Hubble
+BACKGROUND_COLOR = 'rgba(5,5,5,0.7)';
+HYPERLANE_COLOR = 'rgba(235,235,235,0.2)';
+STAR_COLOR = 'rgb(235,235,235)';
+POPULATED_COLOR = 'rgb(245,235,10)';
 
 USE_FLAG_COLORS = false;
 DRAW_MAP_NAMES = true;
+ALT_NAME_STYLE = false;
 DRAW_MAP_MIDDLE = true;
-DRAW_ECON_LIST = true;
+USE_HUBBLE = true;
 
 lock = false;
 saveGame = null;
@@ -408,9 +414,8 @@ class SaveState {
 
                         this.meta = parseDataToObject(content);
 
-                        console.log(this.gamestate);
-                        console.log(this.meta);
-
+                        // console.log(this.gamestate);
+                        // console.log(this.meta);
                         
                         document.getElementById('fileStatus').innerHTML = 'Save file loaded.'
 
@@ -464,7 +469,10 @@ function generateMap() {
 
     USE_FLAG_COLORS = document.getElementById('useFlagColors').checked;
     DRAW_MAP_NAMES = document.getElementById('drawMapNames').checked;
+    ALT_NAME_STYLE = document.getElementById('altNameStyle').checked;
     DRAW_MAP_MIDDLE = document.getElementById('drawMapMiddle').checked;
+    USE_HUBBLE = document.getElementById('useHubble').checked;
+    PAINT_SCALE_FACTOR = document.getElementById('paintScale').value / 100;
 
     // Really long function
 
@@ -766,7 +774,7 @@ function generateMap() {
         for (let j = 0; j < RES_Y; j++) {
 
             let obj = {};
-            obj[UNOWNED_ID] = 3 * scaleFactor * UNOWNED_VALUE;  // For some reason outer borders aren't smooth unless I multiply by a number
+            obj[UNOWNED_ID] = 3 * scaleFactor * UNOWNED_VALUE; // For some reason outer borders aren't smooth unless I multiply by a number
             column.push(obj);
 
         }
@@ -1025,7 +1033,7 @@ function generateMap() {
     
         }
     
-        ctx.font = `${MAP_FONT_WEIGHT} 30px ${MAP_FONT}`;
+        ctx.font = `bold 30px ${MAP_FONT}`;
     
         for (let block of Object.keys(blockMaximalRectangle)) {
     
@@ -1036,6 +1044,7 @@ function generateMap() {
     
             let name = ''+(gamestate.country[owner].name);
             name = name.replaceAll('"', '');
+            if (ALT_NAME_STYLE) name = (name.toLocaleUpperCase()); // .split('').join('\u200A'); // Uppercase, add hair space
     
             if (name.length < 1) continue;
     
@@ -1089,7 +1098,8 @@ function generateMap() {
                     x: sizeX * best.x + fontSize / 30 * (-text.actualBoundingBoxLeft + 10),
                     y: sizeY * best.y + fontSize / 30 * (Math.abs(text.actualBoundingBoxAscent) + 5),
                     fontSize: fontSize,
-                    text: name
+                    text: name,
+                    owner: owner
                 };
             }
     
@@ -1105,9 +1115,16 @@ function generateMap() {
     canvas.style.width = '1100px';
     canvas.style.height = '1100px';
 
-    ctx.filter = BACKGROUND_FILTER;
-    ctx.drawImage(BACKGROUND_IMAGE, 0, 0, MAP_WIDTH, MAP_HEIGHT);
-    ctx.filter = 'none';
+    if (USE_HUBBLE) {
+        ctx.filter = BACKGROUND_FILTER;
+        ctx.drawImage(BACKGROUND_IMAGE, 0, 0, MAP_WIDTH, MAP_HEIGHT);
+        ctx.filter = 'none';
+    } else {
+        ctx.fillStyle = SUBSTITUTE_BACKGROUND;
+        ctx.beginPath();
+        ctx.rect(0, 0, MAP_WIDTH, MAP_HEIGHT);
+        ctx.fill();
+    }
 
     ctx.fillStyle = BACKGROUND_COLOR;
     ctx.beginPath();
@@ -1749,14 +1766,17 @@ function generateMap() {
 
     if (DRAW_MAP_NAMES) {
 
-        ctx.fillStyle = MAP_NAME_FILL;
-        ctx.strokeStyle = MAP_NAME_STROKE;
+        let stroke = ctx.createLinearGradient(MAP_WIDTH / 2, 0, MAP_WIDTH / 2, MAP_HEIGHT); // Use flat gradient to improve rendering on iOS Safari
+        stroke.addColorStop(0, MAP_NAME_STROKE);
+        stroke.addColorStop(1, MAP_NAME_STROKE);
+        ctx.strokeStyle = stroke;
 
         for (let [block, rect] of Object.entries(blockMaximalRectangle)) {
             if (rect == null || rect.fontSize < MIN_MAP_NAME_SIZE) continue;
 
-            ctx.font = `${MAP_FONT_WEIGHT} ${rect.fontSize}px ${MAP_FONT}`;
-            ctx.lineWidth = MAP_NAME_STROKE_WIDTH * rect.fontSize;
+            ctx.fillStyle = MAP_NAME_FILL;
+            ctx.font = `bold ${rect.fontSize}px ${MAP_FONT}`;
+            ctx.lineWidth = (ALT_NAME_STYLE ? MAP_NAME_STROKE_WIDTH_ALT : MAP_NAME_STROKE_WIDTH) * rect.fontSize;
             ctx.strokeText(rect.text, rect.x, rect.y);
             ctx.fillText(rect.text, rect.x, rect.y);
         }
@@ -1889,14 +1909,11 @@ function generateMap() {
 
     }
 
-    ctx.font = `24px ${MAP_MIDDLE_FONT}`;
-    ctx.fillStyle = MAP_MIDDLE_TEXT_COLOR;
-    ctx.fillText('Background Image: NASA / STScI / ESA', PADDING * 0.1, PADDING * 0.28);
-
 }
 
 function drawMap(e) {
 
+    document.getElementById('mapStatus').innerHTML = 'Working...';
     sleepUntilTrue(() => (saveGame != null && !lock)).then(() => {
 
         lock = true;
@@ -1904,10 +1921,12 @@ function drawMap(e) {
         try {
 
             generateMap();
+            document.getElementById('mapStatus').innerHTML = '';
 
         } catch (e) {
             lock = false;
-            console.log(e); 
+            console.log(e);
+            document.getElementById('mapStatus').innerHTML = 'Map failed to generate.';
         }
 
 

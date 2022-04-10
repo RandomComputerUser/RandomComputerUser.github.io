@@ -31,9 +31,30 @@
 
     <br>
 
+    <input type="checkbox" id="altNameStyle" name="altNameStyle">
+    <label for="altNameStyle">Use alternate map name style (uppercase)</label>
+
+    <br>
+
     <input type="checkbox" id="drawMapMiddle" name="drawMapMiddle" checked>
     <label for="drawMapMiddle">Draw info in the center of the map</label>
 
+    <br>
+
+    <input type="checkbox" id="useHubble" name="useHubble" checked>
+    <label for="useHubble">Use the Hubble Deep Field (credit: NASA) as the background</label>
+
+    <br>
+
+    <input type="range" min="100" max="300" value="165" class="slider" id="paintScale" name="paintScale" oninput="updatePaintScaleNumberDisplay()">
+    <span id="paintScaleNumberDisplay" class="big"></span>
+    <script>
+        document.getElementById('paintScaleNumberDisplay').innerHTML = ''+(document.getElementById('paintScale').value);
+    </script>
+    <br>
+    <label for="useHubble">Paint scale (higher values reduce the extent of borders drawn)</label>
+
+    <br>
     <br>
     <br>
 
@@ -46,20 +67,19 @@
     <span class="warning">Warning: The maps generated do not include include the fog of war.</span>
     <br>
     <span class="bold">On Windows, use Firefox for better map name rendering.</span>
-    <br>
-    <span class="bold">Some fonts may not load the first time you generate a map.</span>
 
     <br>
     <br>
 
     <button onclick="drawMap(event)">Generate Map</button>
+    <span id="mapStatus"></span>
     
     <br>
     <br>
 
     <canvas id="galaxyMap"></canvas>
 
-    <img id="backgroundImage" style="display:none" src="./HubbleUltraDeepField.jpg">
+    <img id="backgroundImage" style="display:none" src="./HubbleDeepField.jpg">
 
     <script src="jszip.js"></script>
     <script src="main.js"></script>
