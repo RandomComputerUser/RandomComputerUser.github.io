@@ -1,18 +1,24 @@
 html, body, input, button {
-    font-family: "Titillium Web", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: "Barlow Semi Condensed", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 1.1rem;
 
-    background-color: #444;
-    color: #BBB;
+    background-color: #081828;
+    color: #d0d0d0;
+}
+
+input[type="text"] {
+    background-color: #d0d0d0;
+    color: #081828;
 }
 
 button {
-    background-color: #AAA;
-    color: #222;
-    font-weight: 700;
+    background-color: #d0d0d0;
+    color: #081828;
+    font-weight: 600;
 }
 
 .bold {
-    font-weight: 700;
+    font-weight: 600;
 }
 
 .semibold {
@@ -20,7 +26,7 @@ button {
 }
 
 .warning {
-    font-weight: 700;
+    font-weight: 600;
     color: #ff0;
 }
 
