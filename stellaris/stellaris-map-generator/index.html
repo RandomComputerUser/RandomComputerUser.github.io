@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stellaris Map Generator</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@400;600&family=Titillium+Web:wght@400;600;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <input type="file" id="saveFileInput" onchange="getSave(event)" />
+
+    <br>
+
+    <span id="fileStatus">No save file selected.</span>
+
+    <br>
+    <br>
+
+    <input type="checkbox" id="useFlagColors" name="useFlagColors">
+    <label for="useFlagColors">Use in-game flag colors instead of in-game map colors</label>
+    
+    <br>
+
+    <input type="checkbox" id="drawMapNames" name="drawMapNames" checked>
+    <label for="drawMapNames">Draw country names on map</label>
+
+    <br>
+
+    <input type="checkbox" id="drawMapMiddle" name="drawMapMiddle" checked>
+    <label for="drawMapMiddle">Draw info in the center of the map</label>
+
+    <br>
+    <br>
+
+    <label for="galaxyName">Name your galaxy: </label>
+    <input type="text" id="galaxyName" name="galaxyName">
+
+    <br>
+    <br>
+
+    <span class="warning">Warning: The maps generated do not include include the fog of war.</span>
+    <br>
+    <span class="bold">On Windows, use Firefox for better map name rendering.</span>
+    <br>
+    <span class="bold">Some fonts may not load the first time you generate a map.</span>
+
+    <br>
+    <br>
+
+    <button onclick="drawMap(event)">Generate Map</button>
+    
+    <br>
+    <br>
+
+    <canvas id="galaxyMap"></canvas>
+
+    <img id="backgroundImage" style="display:none" src="./HubbleUltraDeepField.jpg">
+
+    <script src="jszip.js"></script>
+    <script src="main.js"></script>
+
+</body>
+</html>

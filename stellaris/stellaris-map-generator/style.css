@@ -1,0 +1,34 @@
+html, body, input, button {
+    font-family: "Titillium Web", "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+    background-color: #444;
+    color: #BBB;
+}
+
+button {
+    background-color: #AAA;
+    color: #222;
+    font-weight: 700;
+}
+
+.bold {
+    font-weight: 700;
+}
+
+.semibold {
+    font-weight: 600;
+}
+
+.warning {
+    font-weight: 700;
+    color: #ff0;
+}
+
+#dateInput {
+    width: 80%;
+}
+
+#chart {
+    display: inline-block;
+    text-decoration: underline;
+}
