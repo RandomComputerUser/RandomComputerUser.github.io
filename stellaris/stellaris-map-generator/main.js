@@ -75,6 +75,7 @@ DRAW_MAP_NAMES = true;
 ALT_NAME_STYLE = false;
 DRAW_MAP_MIDDLE = true;
 USE_HUBBLE = true;
+SMOOTH_BORDERS = true;
 
 lock = false;
 saveGame = null;
@@ -472,6 +473,7 @@ function generateMap() {
     ALT_NAME_STYLE = document.getElementById('altNameStyle').checked;
     DRAW_MAP_MIDDLE = document.getElementById('drawMapMiddle').checked;
     USE_HUBBLE = document.getElementById('useHubble').checked;
+    SMOOTH_BORDERS = document.getElementById('smoothBorders').checked;
     PAINT_SCALE_FACTOR = document.getElementById('paintScale').value / 100;
 
     // Really long function
@@ -885,12 +887,10 @@ function generateMap() {
                 let x = sizeX * i;
                 let y = sizeY * j;
 
-                let distance = Math.hypot(x1 - x, y1 - y);
-                distance = Math.min(distance, Math.hypot(x2 - x, y2 - y));
+                let distance = Math.min(Math.hypot(x - x1, y - y1), Math.hypot(x - x2, y - y2));
 
-                let lineDistance = distanceFactor * Math.abs(a * x + b * y - c);
                 if (Math.abs(a2 * x + b2 * y - c2) <= halfLength) {
-                    distance = Math.min(distance, lineDistance);
+                    distance = Math.min(distance, distanceFactor * Math.abs(a * x + b * y - c));
                 }
 
                 let value = baseRadius - distance;
@@ -911,6 +911,52 @@ function generateMap() {
 
             }
         }
+
+    }
+
+    if (SMOOTH_BORDERS) {
+
+        let map2 = [];
+        for (let i = 0; i < RES_X; i++) {
+            let column = [];
+            for (let j = 0; j < RES_Y; j++) {
+                column.push({});
+            }
+            map2.push(column);
+        }
+
+        for (let j = 0; j < RES_Y; j++) {
+            for (let i = 0; i < RES_X; i++) {
+
+                let entries = Object.entries(map[i][j]);
+
+                for (let dy = -4; dy <= 4; dy++) {
+
+                    let y = j + dy;
+                    if (y < 0 || y >= RES_Y) continue;
+
+                    for (let dx = -4; dx <= 4; dx++) {
+
+                        let x = i + dx;
+                        if (x < 0 || x >= RES_X) continue;
+
+                        const factor = 1 - Math.hypot(dx, dy) / 5.0;
+                        if (factor <= 0) continue;
+                        for (let [id, value] of entries) {
+                            if (map2[x][y][id] == null) {
+                                map2[x][y][id] = factor * value;
+                            } else {
+                                map2[x][y][id] += factor * value;
+                            }
+                        }
+
+                    }
+
+                }
+            }
+        }
+
+        map = map2;
 
     }
 
@@ -1115,21 +1161,14 @@ function generateMap() {
     canvas.style.width = '1100px';
     canvas.style.height = '1100px';
 
-    if (USE_HUBBLE) {
-        ctx.filter = BACKGROUND_FILTER;
-        ctx.drawImage(BACKGROUND_IMAGE, 0, 0, MAP_WIDTH, MAP_HEIGHT);
-        ctx.filter = 'none';
-    } else {
-        ctx.fillStyle = SUBSTITUTE_BACKGROUND;
-        ctx.beginPath();
-        ctx.rect(0, 0, MAP_WIDTH, MAP_HEIGHT);
-        ctx.fill();
-    }
+    ctx.filter = 'none';
 
-    ctx.fillStyle = BACKGROUND_COLOR;
+    ctx.fillStyle = 'rgba(0,0,0,0)';
+    ctx.globalCompositeOperation = 'copy';
     ctx.beginPath();
     ctx.rect(0, 0, MAP_WIDTH, MAP_HEIGHT);
     ctx.fill();
+    ctx.globalCompositeOperation = 'source-over';
 
     function lerp(p0, p1, a0, b0, a1, b1) {
 
@@ -1381,6 +1420,8 @@ function generateMap() {
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
 
+    ctx.globalCompositeOperation = 'source-atop';
+
     for (let border of EDGE_BORDERS) {
         ctx.strokeStyle = border.color;
         ctx.lineWidth = border.width;
@@ -1522,6 +1563,8 @@ function generateMap() {
         ctx.stroke();
 
     }
+
+    ctx.globalCompositeOperation = 'source-over';
 
     for (let border of BORDERS) {
         ctx.strokeStyle = border.color;
@@ -1908,6 +1951,26 @@ function generateMap() {
         ctx.fillText('Capital System', x + 0.08 * innerRadius, y + 0.03 * innerRadius);
 
     }
+
+    ctx.globalCompositeOperation = 'destination-over';
+
+    ctx.fillStyle = BACKGROUND_COLOR;
+    ctx.beginPath();
+    ctx.rect(0, 0, MAP_WIDTH, MAP_HEIGHT);
+    ctx.fill();
+
+    if (USE_HUBBLE) {
+        ctx.filter = BACKGROUND_FILTER;
+        ctx.drawImage(BACKGROUND_IMAGE, 0, 0, MAP_WIDTH, MAP_HEIGHT);
+        ctx.filter = 'none';
+    } else {
+        ctx.fillStyle = SUBSTITUTE_BACKGROUND;
+        ctx.beginPath();
+        ctx.rect(0, 0, MAP_WIDTH, MAP_HEIGHT);
+        ctx.fill();
+    }
+
+    ctx.globalCompositeOperation = 'source-over';
 
 }
 
