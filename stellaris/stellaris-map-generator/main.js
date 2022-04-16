@@ -38,10 +38,10 @@ UNOWNED_HYPERLANE_RADIUS = 95;
 SYSTEM_RADIUS = UNOWNED_RADIUS + UNOWNED_VALUE - 6;
 HYPERLANE_RADIUS = UNOWNED_HYPERLANE_RADIUS + UNOWNED_VALUE - 6;
 
-NEAR_RADIUS = 20;
+NEAR_RADIUS = 16;
 NEAR_BOOST = 100;
 
-SMOOTHING_RADIUS = 5;
+SMOOTHING_RADIUS = 4;
 
 PAINT_SCALE_FACTOR = 1.65;
 
@@ -726,10 +726,10 @@ function getMap(stars, hyperlanes, scaleFactor, sizeX, sizeY) {
                 let distance = Math.hypot(star.x - x, star.y - y);
                 let value = baseRadius - distance;
 
-                if (distance < NEAR_RADIUS) {
-                    value -= baseRadius - NEAR_RADIUS;
+                if (distance < NEAR_RADIUS * scaleFactor) {
+                    value -= baseRadius - NEAR_RADIUS * scaleFactor;
                     value *= NEAR_BOOST;
-                    value += baseRadius - NEAR_RADIUS;
+                    value += baseRadius - NEAR_RADIUS * scaleFactor;
                 }
 
                 value = Math.max(0, value);
@@ -804,10 +804,10 @@ function getMap(stars, hyperlanes, scaleFactor, sizeX, sizeY) {
 
                 let value = baseRadius - distance;
 
-                if (distance < NEAR_RADIUS / 2) {
-                    value -= baseRadius - NEAR_RADIUS / 2;
+                if (distance < NEAR_RADIUS / 2  * scaleFactor) {
+                    value -= baseRadius - NEAR_RADIUS / 2 * scaleFactor;
                     value *= NEAR_BOOST / 2;
-                    value += baseRadius - NEAR_RADIUS / 2;
+                    value += baseRadius - NEAR_RADIUS / 2 * scaleFactor;
                 }
 
                 value = Math.max(0, value);
