@@ -26,7 +26,7 @@ MAP_FONT_ALT = '"Barlow"';
 MAX_MAP_NAME_SIZE = 110;
 
 MAP_MIDDLE_FONT = '"Barlow Semi Condensed"';
-MAP_MIDDLE_TEXT_COLOR = 'rgba(245,245,245,0.85)';
+MAP_MIDDLE_TEXT_COLOR = 'rgba(250,250,250,0.9)';
 
 MISSING_COLOR = 'rgb(64,64,64)';
 
@@ -1931,20 +1931,22 @@ function drawMapMiddle(ctx, gamestate, innerRadius) {
     ctx.font = `${fontSize}px ${MAP_MIDDLE_FONT}`;
 
     let x = MAP_WIDTH / 2 - 0.56 * innerRadius;
-    let heights = [0.07, 0.22, 0.37, 0.53, 0.67];
+    let heights = [0.05, 0.2, 0.35, 0.51, 0.68];
 
     ctx.lineJoin = 'round';
     ctx.lineCap = 'butt';
     ctx.strokeStyle = HYPERLANE_COLOR;
     ctx.lineWidth = HYPERLANE_WIDTH;
     ctx.beginPath();
-    ctx.moveTo(x, MAP_HEIGHT / 2);
+    ctx.moveTo(x, MAP_HEIGHT / 2 - 0.02 * innerRadius);
     ctx.lineTo(x, MAP_HEIGHT / 2 + heights[0] * innerRadius - STAR_PADDING);
     ctx.moveTo(x, MAP_HEIGHT / 2 + heights[0] * innerRadius + STAR_PADDING);
     ctx.lineTo(x, MAP_HEIGHT / 2 + heights[1] * innerRadius - STAR_PADDING);
     ctx.moveTo(x, MAP_HEIGHT / 2 + heights[1] * innerRadius + STAR_PADDING);
     ctx.lineTo(x, MAP_HEIGHT / 2 + heights[2] * innerRadius - STAR_PADDING);
     ctx.moveTo(x, MAP_HEIGHT / 2 + heights[2] * innerRadius + STAR_PADDING);
+    ctx.lineTo(x, MAP_HEIGHT / 2 + heights[4] * innerRadius - (CAPITAL_OUTER_RADIUS + CAPITAL_INNER_RADIUS) / 2);
+    ctx.moveTo(x, MAP_HEIGHT / 2 + heights[4] * innerRadius + (CAPITAL_OUTER_RADIUS + CAPITAL_INNER_RADIUS) / 2);
     ctx.lineTo(x, MAP_HEIGHT / 2 + 0.77 * innerRadius);
     ctx.stroke();
 
