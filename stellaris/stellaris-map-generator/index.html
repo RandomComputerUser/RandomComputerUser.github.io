@@ -8,7 +8,7 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@400;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@400;500&family=Barlow:wght@700&display=swap" rel="stylesheet"><link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -23,6 +23,11 @@
 
     <input type="checkbox" id="useFlagColors" name="useFlagColors">
     <label for="useFlagColors">Use in-game flag colors instead of in-game map colors</label>
+
+    <br>
+
+    <input type="checkbox" id="useFederationColors" name="useFederationColors">
+    <label for="useFederationColors">Use federation colors</label>
     
     <br>
 
@@ -32,7 +37,12 @@
     <br>
 
     <input type="checkbox" id="altNameStyle" name="altNameStyle">
-    <label for="altNameStyle">Use alternate map name style (uppercase)</label>
+    <label for="altNameStyle">Use alternate map name style (uppercase, smaller)</label>
+
+    <br>
+
+    <input type="checkbox" id="limitMapNameSize" name="limitMapNameSize" checked>
+    <label for="limitMapNameSize">Limit map name size</label>
 
     <br>
 
@@ -46,12 +56,17 @@
 
     <br>
 
-    <input type="checkbox" id="smoothBorders" name="smoothBorders">
+    <input type="checkbox" id="lightBorders" name="lightBorders">
+    <label for="lightBorders">Light borders</label>
+
+    <br>
+
+    <input type="checkbox" id="smoothBorders" name="smoothBorders" checked>
     <label for="smoothBorders">Rounder borders (good increase in quality, takes longer to generate)</label>
 
     <br>
 
-    <input type="range" min="100" max="300" value="165" class="slider" id="paintScale" name="paintScale" oninput="updatePaintScaleNumberDisplay()">
+    <input type="range" min="200" max="500" value="325" class="slider" id="paintScale" name="paintScale" oninput="updatePaintScaleNumberDisplay()">
     <span id="paintScaleNumberDisplay" class="big"></span>
     <script>
         document.getElementById('paintScaleNumberDisplay').innerHTML = ''+(document.getElementById('paintScale').value);
@@ -83,7 +98,8 @@
     <br>
 
     <canvas id="galaxyMap"></canvas>
-
+    
+    <canvas id="helperCanvas" style="display:none"></canvas>
     <img id="backgroundImage" style="display:none" src="./HubbleDeepField.jpg">
 
     <script src="jszip.js"></script>

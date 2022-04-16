@@ -12,30 +12,36 @@ function updatePaintScaleNumberDisplay(value) {
 ENTRIES_KEY = '___entries';
 UNOWNED_ID = -1000000000;
 
+CANVAS_SCALE = 2;
+
 MAP_FONT = '"Barlow Semi Condensed"';
-MAP_NAME_FILL = 'rgba(10,10,10,0.6)';
-MAP_NAME_STROKE = 'rgba(225,225,225,0.5)';
-MAP_NAME_STROKE_WIDTH = 0.22;
-MAP_NAME_STROKE_WIDTH_ALT = 0.3;
+MAP_NAME_FILL = 'rgb(15,15,15)';
+MAP_NAME_STROKE = 'rgba(235,235,235)';
+MAP_NAME_ALPHA = 0.51;
+MAP_NAME_STROKE_WIDTH = 0.25 * CANVAS_SCALE / 2;
 MIN_MAP_NAME_SIZE = 10;
+
+MAP_FONT_ALT = '"Barlow"';
+
+MAX_MAP_NAME_SIZE = 110;
 
 MAP_MIDDLE_FONT = '"Barlow Semi Condensed"';
 MAP_MIDDLE_TEXT_COLOR = 'rgba(245,245,245,0.85)';
 
 MISSING_COLOR = 'rgb(64,64,64)';
 
-CANVAS_SCALE = 2;
-
 MAP_WIDTH = CANVAS_SCALE * 1920;
 MAP_HEIGHT = CANVAS_SCALE * 1920;
 UNOWNED_VALUE = 20;
 UNOWNED_RADIUS = 110;
-UNOWNED_HYPERLANE_RADIUS = 105;
-SYSTEM_RADIUS = UNOWNED_RADIUS + UNOWNED_VALUE - 13;
-HYPERLANE_RADIUS = UNOWNED_HYPERLANE_RADIUS + UNOWNED_VALUE - 13;
+UNOWNED_HYPERLANE_RADIUS = 95;
+SYSTEM_RADIUS = UNOWNED_RADIUS + UNOWNED_VALUE - 6;
+HYPERLANE_RADIUS = UNOWNED_HYPERLANE_RADIUS + UNOWNED_VALUE - 6;
 
 NEAR_RADIUS = 20;
 NEAR_BOOST = 100;
+
+SMOOTHING_RADIUS = 5;
 
 PAINT_SCALE_FACTOR = 1.65;
 
@@ -55,26 +61,31 @@ CAPITAL_INNER_RADIUS = CANVAS_SCALE * 7;
 CAPITAL_STAR_RADIUS = CANVAS_SCALE * 7;
 
 HYPERLANE_WIDTH = CANVAS_SCALE * 3;
+
 BORDERS = [
-    {color: 'rgba(205,205,205,0.5)', width: CANVAS_SCALE * 12},
-    {color: 'rgb(225,225,225)', width: CANVAS_SCALE * 2}
+    {color: 'rgba(225,225,225,0.4)', width: CANVAS_SCALE * 10, light: false, regular: true},
+    {color: 'rgb(235,235,235)', width: CANVAS_SCALE * 2, light: true, regular: true}
 ];
 EDGE_BORDERS = [
-    {color: 'rgba(5,5,5,0.5)', width: CANVAS_SCALE * 16}
+    {color: 'rgba(5,5,5,0.5)', width: CANVAS_SCALE * 14, light: false, regular: true},
+    {color: 'rgba(5,5,5,0.5)', width: CANVAS_SCALE * 7, light: true, regular: false}
 ];
 
 BACKGROUND_FILTER = 'saturate(0%)';
 SUBSTITUTE_BACKGROUND = 'rgb(2,2,2)'; // If no Hubble
 BACKGROUND_COLOR = 'rgba(5,5,5,0.7)';
-HYPERLANE_COLOR = 'rgba(235,235,235,0.2)';
-STAR_COLOR = 'rgb(235,235,235)';
-POPULATED_COLOR = 'rgb(245,235,10)';
+BACKGROUND_COLOR_OPAQUE = 'rgb(5,5,5)';
+HYPERLANE_COLOR = 'rgba(245,245,245,0.18)';
+STAR_COLOR = 'rgb(245,245,245)';
+POPULATED_COLOR = 'rgb(250,245,10)';
 
 USE_FLAG_COLORS = false;
 DRAW_MAP_NAMES = true;
 ALT_NAME_STYLE = false;
+LIMIT_MAP_NAME_SIZE = false;
 DRAW_MAP_MIDDLE = true;
 USE_HUBBLE = true;
+LIGHT_BORDERS = false;
 SMOOTH_BORDERS = true;
 
 lock = false;
@@ -284,7 +295,6 @@ function serializeObjectToData(obj) {
             return ''+val;
         } else if (typeof val === 'string') {
             return val;
-
         }
     }
 
@@ -454,109 +464,11 @@ function getSave(e) {
 
 function createEntries(obj) {
 
-    obj[ENTRIES_KEY] = [];
-
-    for (let prop in obj) {
-        
-        if (!obj.hasOwnProperty(prop)) continue;
-
-        obj[ENTRIES_KEY].push([prop, obj[prop]]);
-
-    }
+    obj[ENTRIES_KEY] = Object.entries(obj);
 
 }
 
-function generateMap() {
-
-    USE_FLAG_COLORS = document.getElementById('useFlagColors').checked;
-    DRAW_MAP_NAMES = document.getElementById('drawMapNames').checked;
-    ALT_NAME_STYLE = document.getElementById('altNameStyle').checked;
-    DRAW_MAP_MIDDLE = document.getElementById('drawMapMiddle').checked;
-    USE_HUBBLE = document.getElementById('useHubble').checked;
-    SMOOTH_BORDERS = document.getElementById('smoothBorders').checked;
-    PAINT_SCALE_FACTOR = document.getElementById('paintScale').value / 100;
-
-    // Really long function
-
-    const canvas = document.getElementById('galaxyMap');
-    const ctx = canvas.getContext('2d');
-
-    const gamestate = saveGame.gamestate;
-    const meta = saveGame.meta;
-
-    // Get map data
-
-    let stars = {};
-    let hyperlanes = {};
-
-    let xmin = Infinity;
-    let xmax = -Infinity;
-    let ymin = Infinity;
-    let ymax = -Infinity;
-
-    let innerRadius = Infinity;
-
-    let starbaseCount = {};
-
-    for (let [id, star] of Object.entries(gamestate.galactic_object)) {
-
-        if (id == ENTRIES_KEY) continue;
-
-        id = Math.round(+id);
-
-        if (star.coordinate == null) continue;
-
-        xmin = Math.min(xmin, +star.coordinate.x);
-        xmax = Math.max(xmax, +star.coordinate.x);
-        ymin = Math.min(ymin, +star.coordinate.y);
-        ymax = Math.max(ymax, +star.coordinate.y);
-
-        innerRadius = Math.min(innerRadius, Math.hypot(+star.coordinate.x, +star.coordinate.y));
-
-        stars[id] = {
-            x: +star.coordinate.x,
-            y: +star.coordinate.y,
-            owner: null,
-            hyperlanes: !(star.hyperlane == null || star.hyperlane.length === 0),
-            capital: false,
-            populated: false
-        };
-
-        if (star.hyperlane != null) {
-            for (let hyperlane of star.hyperlane) {
-                let from = id;
-                let to = Math.round(+hyperlane.to);
-    
-                if (from > to) {
-                    let tmp = from;
-                    from = to;
-                    to = tmp;
-                }
-    
-                let key = `${from},${to}`;
-    
-                hyperlanes[key] = {
-                    from: from,
-                    to: to
-                };
-            }
-        }
-
-        if (star.starbase != null) {
-            if (gamestate.starbase_mgr.starbases[star.starbase] == null) continue;
-            if (gamestate.starbase_mgr.starbases[star.starbase].owner == null) continue;
-
-            let owner = gamestate.starbase_mgr.starbases[star.starbase].owner
-            stars[id].owner = owner;
-            if (starbaseCount[owner] == null) starbaseCount[owner] = 0;
-            starbaseCount[owner]++;
-
-            stars[id].upgraded = (gamestate.starbase_mgr.starbases[star.starbase].level != '"starbase_level_outpost"');
-        }
-
-    }
-
-    // Get colors
+function getColorsAndCapitalSystems(gamestate, starbaseCount, stars, federations) {
 
     function hsv(h, s, v, count) {
 
@@ -564,7 +476,7 @@ function generateMap() {
         // s = Math.max(0, Math.min(1, s + 0.25 * (Math.random() - 0.6)));
 
         count = +(count || 0);
-        v = Math.min(1.0, Math.max(0.2, 0.9 * v * (0.85 ** count)));
+        v = Math.min(1.0, Math.max(0.2, 0.9 * v * (0.85 ** count) + 0.05));
         s = 0.65 * s;
 
         let r = 0.0;
@@ -607,20 +519,8 @@ function generateMap() {
 
     }
 
-    if (gamestate.planets != null && gamestate.planets.planet != null) {
-        for (let [id, planet] of Object.entries(gamestate.planets.planet)) {
-            if (id === ENTRIES_KEY) continue;
-
-            if (!Array.isArray(planet.pop)) continue;
-            if (planet.pop.length < 1) continue;
-
-            if (planet.coordinate == null) continue;
-            if (planet.coordinate.origin == null) continue;
-
-            let system = +(planet.coordinate.origin);
-            if (stars[system] == null) continue;
-            stars[system].populated = true;
-        }
+    function randomColor() {
+        return hsv(Math.random(), 0.4 * Math.random() + 0.4, 0.3 * Math.random() + 0.45, 0);
     }
 
     let colors = {};
@@ -748,44 +648,53 @@ function generateMap() {
             }
         } 
 
-        colors[id] = `rgb(${60 + Math.floor(70 * Math.random())},${60 + Math.floor(70 * Math.random())},${60 + Math.floor(70 * Math.random())})`;
+        colors[id] = randomColor();
+    }
+
+    if (federations && gamestate.federation != null) {
+
+        for (let [id, federation] of Object.entries(gamestate.federation)) {
+
+            if (typeof federation !== 'object' || federation == null) continue;
+            if (!Array.isArray(federation.members)) continue;
+
+            let color = randomColor();
+
+            for (let id of federation.members) {
+                if (colors[id] != null) {
+                    color = colors[id];
+                    break;
+                }
+            }
+
+            for (let id of federation.members) {
+                if (colors[id] != null) colors[id] = color;
+            }
+
+        }
+
     }
 
     colors[UNOWNED_ID] = BACKGROUND_COLOR;
 
-    // Generate map
+    return [colors, colorCount];
 
-    const sizeX = MAP_WIDTH / (RES_X - 1);
-    const sizeY = MAP_HEIGHT / (RES_Y - 1);
+}
 
-    let scale = Math.min(
-        (MAP_WIDTH / 2 - (SYSTEM_RADIUS - UNOWNED_VALUE) - PADDING) / Math.max(Math.abs(xmax), Math.abs(xmin)),
-        (MAP_HEIGHT / 2 - (SYSTEM_RADIUS - UNOWNED_VALUE) - PADDING) / Math.max(Math.abs(ymax), Math.abs(ymin))
-    );
-
-    innerRadius = Math.max(0, Math.min(MAP_WIDTH, MAP_HEIGHT, scale * innerRadius - INNER_PADDING));
-
-    let scaleFactor = scale / PAINT_SCALE_FACTOR;
-
-    let ax = MAP_WIDTH / 2;
-    let ay = MAP_HEIGHT / 2;
+function getMap(stars, hyperlanes, scaleFactor, sizeX, sizeY) {
 
     let map = [];
+
     for (let i = 0; i < RES_X; i++) {
         let column = [];
         for (let j = 0; j < RES_Y; j++) {
 
             let obj = {};
-            obj[UNOWNED_ID] = 3 * scaleFactor * UNOWNED_VALUE; // For some reason outer borders aren't smooth unless I multiply by a number
+            obj[UNOWNED_ID] = scaleFactor * UNOWNED_VALUE;
             column.push(obj);
 
         }
         map.push(column);
-    }
-
-    for (let [id, star] of Object.entries(stars)) {
-        star.x = -scale * star.x + ax;
-        star.y = scale * star.y + ay
     }
 
     for (let [id, star] of Object.entries(stars)) {
@@ -914,69 +823,57 @@ function generateMap() {
 
     }
 
-    if (SMOOTH_BORDERS) {
+    return map;
 
-        let map2 = [];
-        for (let i = 0; i < RES_X; i++) {
-            let column = [];
-            for (let j = 0; j < RES_Y; j++) {
-                column.push({});
-            }
-            map2.push(column);
-        }
+}
 
-        for (let j = 0; j < RES_Y; j++) {
-            for (let i = 0; i < RES_X; i++) {
+function smoothMap(map) {
 
-                let entries = Object.entries(map[i][j]);
-
-                for (let dy = -4; dy <= 4; dy++) {
-
-                    let y = j + dy;
-                    if (y < 0 || y >= RES_Y) continue;
-
-                    for (let dx = -4; dx <= 4; dx++) {
-
-                        let x = i + dx;
-                        if (x < 0 || x >= RES_X) continue;
-
-                        const factor = 1 - Math.hypot(dx, dy) / 5.0;
-                        if (factor <= 0) continue;
-                        for (let [id, value] of entries) {
-                            if (map2[x][y][id] == null) {
-                                map2[x][y][id] = factor * value;
-                            } else {
-                                map2[x][y][id] += factor * value;
-                            }
-                        }
-
-                    }
-
-                }
-            }
-        }
-
-        map = map2;
-
-    }
-
-    let values = [];
+    let map2 = [];
     for (let i = 0; i < RES_X; i++) {
         let column = [];
         for (let j = 0; j < RES_Y; j++) {
-
-            let value = {id: UNOWNED_ID, value: 0};
-            for (let [id, val] of Object.entries(map[i][j])) {
-                if (val > value.value) {
-                    value.id = id;
-                    value.value = val;
-                }
-            }
-
-            column.push(value);
+            column.push({});
         }
-        values.push(column);
+        map2.push(column);
     }
+
+    for (let j = 0; j < RES_Y; j++) {
+        for (let i = 0; i < RES_X; i++) {
+
+            let entries = Object.entries(map[i][j]);
+
+            for (let dy = -SMOOTHING_RADIUS; dy <= SMOOTHING_RADIUS; dy++) {
+
+                let y = j + dy;
+                if (y < 0 || y >= RES_Y) continue;
+
+                for (let dx = -SMOOTHING_RADIUS; dx <= SMOOTHING_RADIUS; dx++) {
+
+                    let x = i + dx;
+                    if (x < 0 || x >= RES_X) continue;
+
+                    const factor = 1 - Math.hypot(dx, dy) / (SMOOTHING_RADIUS + 1);
+                    if (factor <= 0) continue;
+                    for (let [id, value] of entries) {
+                        if (map2[x][y][id] == null) {
+                            map2[x][y][id] = factor * value;
+                        } else {
+                            map2[x][y][id] += factor * value;
+                        }
+                    }
+
+                }
+
+            }
+        }
+    }
+
+    return map2;
+
+}
+
+function getBlocksAndMapNames(ctx, gamestate, values, createMapNames, sizeX, sizeY) {
 
     let blocks = [];
     let blockRun = [];
@@ -985,101 +882,101 @@ function generateMap() {
     let blockMaximalRectangle = {};
     let blockCount = 0;
 
-    if (DRAW_MAP_NAMES) {
-
-        for (let i = 0; i < RES_X - 1; i++) {
-            let column = [];
-            let column2 = [];
-            for (let j = 0; j < RES_Y - 1; j++) {
-                column.push(-1);
-                column2.push(null);
-            }
-            blocks.push(column);
-            blockRun.push(column2);
+    for (let i = 0; i < RES_X - 1; i++) {
+        let column = [];
+        let column2 = [];
+        for (let j = 0; j < RES_Y - 1; j++) {
+            column.push(-1);
+            column2.push(null);
         }
-    
-        function spreadBlock(i, j, owner, block, stack) {
-            if (i < 0 || i + 1 >= RES_X) return;
-            if (j < 0 || j + 1 >= RES_Y) return;
-    
-            if (blocks[i][j] == block) return;
-            
+        blocks.push(column);
+        blockRun.push(column2);
+    }
+
+    function spreadBlock(i, j, owner, block, stack) {
+        if (i < 0 || i + 1 >= RES_X) return;
+        if (j < 0 || j + 1 >= RES_Y) return;
+
+        if (blocks[i][j] == block) return;
+        
+        let a = values[i][j].id;
+        let b = values[i + 1][j].id;
+        let c = values[i][j + 1].id;
+        let d = values[i + 1][j + 1].id;
+
+        if (a != owner) return;
+        if (!(a == b && b == c && c == d)) return;
+
+        blocks[i][j] = block;
+        blockSize[block]++;
+
+        stack.push([i - 1, j - 1]);
+        stack.push([i, j - 1]);
+        stack.push([i + 1, j - 1]);
+        stack.push([i - 1, j]);
+        stack.push([i + 1, j]);
+        stack.push([i - 1, j + 1]);
+        stack.push([i, j + 1]);
+        stack.push([i + 1, j + 1]);
+
+    }
+
+    let stack = [];
+
+    for (let j = 0; j + 1 < RES_Y; j++) {
+        for (let i = 0; i + 1 < RES_X; i++) {
+
+            if (blocks[i][j] != -1) continue;
+
             let a = values[i][j].id;
             let b = values[i + 1][j].id;
             let c = values[i][j + 1].id;
             let d = values[i + 1][j + 1].id;
-    
-            if (a != owner) return;
-            if (!(a == b && b == c && c == d)) return;
-    
-            blocks[i][j] = block;
-            blockSize[block]++;
-    
-            stack.push([i - 1, j - 1]);
-            stack.push([i, j - 1]);
-            stack.push([i + 1, j - 1]);
-            stack.push([i - 1, j]);
-            stack.push([i + 1, j]);
-            stack.push([i - 1, j + 1]);
-            stack.push([i, j + 1]);
-            stack.push([i + 1, j + 1]);
-    
-        }
-    
-        let stack = [];
-    
-        for (let j = 0; j + 1 < RES_Y; j++) {
-            for (let i = 0; i + 1 < RES_X; i++) {
-    
-                if (blocks[i][j] != -1) continue;
-    
-                let a = values[i][j].id;
-                let b = values[i + 1][j].id;
-                let c = values[i][j + 1].id;
-                let d = values[i + 1][j + 1].id;
-    
-                if (a == UNOWNED_ID) continue;
-                if (a == b && b == c && c == d) {
-                    blockOwner[blockCount] = a;
-                    blockSize[blockCount] = 0;
-                    blockMaximalRectangle[blockCount] = null;
-    
-                    stack.splice(0);
-                    stack.push([i, j]);
-    
-                    for (let k = 0; k < stack.length; k++) {
-                        spreadBlock(stack[k][0], stack[k][1], a, blockCount, stack);
-                    }
-    
-                    blockCount++;
+
+            if (a == UNOWNED_ID) continue;
+            if (a == b && b == c && c == d) {
+                blockOwner[blockCount] = a;
+                blockSize[blockCount] = 0;
+                blockMaximalRectangle[blockCount] = null;
+
+                stack.splice(0);
+                stack.push([i, j]);
+
+                for (let k = 0; k < stack.length; k++) {
+                    spreadBlock(stack[k][0], stack[k][1], a, blockCount, stack);
                 }
+
+                blockCount++;
             }
         }
-    
-        stack.splice(0);
-    
-        for (let j = 0; j < RES_Y - 1; j++) {
-    
-            let currentRun = {block: -1e100};
-    
-            for (let i = 0; i < RES_X - 1; i++) {
-    
-                if (blocks[i][j] == currentRun.block) {
-                    blockRun[i][j] = currentRun;
-                    continue;
-                }
-    
-                currentRun.right = i;
-                currentRun = {block: blocks[i][j], left: i};
+    }
+
+    stack.splice(0);
+
+    for (let j = 0; j < RES_Y - 1; j++) {
+
+        let currentRun = {block: -1e100};
+
+        for (let i = 0; i < RES_X - 1; i++) {
+
+            if (blocks[i][j] == currentRun.block) {
                 blockRun[i][j] = currentRun;
-    
+                continue;
             }
-    
-            currentRun.right = RES_X - 1;
-    
+
+            currentRun.right = i;
+            currentRun = {block: blocks[i][j], left: i};
+            blockRun[i][j] = currentRun;
+
         }
+
+        currentRun.right = RES_X - 1;
+
+    }
+
+    if (createMapNames) {
     
-        ctx.font = `bold 30px ${MAP_FONT}`;
+        ctx.font = `${(ALT_NAME_STYLE) ? 'bold' : '500'} 30px ${(ALT_NAME_STYLE) ? MAP_FONT_ALT : MAP_FONT}`;
     
         for (let block of Object.keys(blockMaximalRectangle)) {
     
@@ -1090,13 +987,13 @@ function generateMap() {
     
             let name = ''+(gamestate.country[owner].name);
             name = name.replaceAll('"', '');
-            if (ALT_NAME_STYLE) name = (name.toLocaleUpperCase()); // .split('').join('\u200A'); // Uppercase, add hair space
+            if (ALT_NAME_STYLE) name = (name.toLocaleUpperCase()).split('').join(' ');
     
             if (name.length < 1) continue;
     
             let text = ctx.measureText(name);
     
-            let idealRatio = (sizeY / sizeX) * (text.width + 20) / (30 + 10);
+            let idealRatio = (sizeY / sizeX) * (text.width + 20) / (30 + 16);
     
             let best = {x: -1, y: -1, size: 0, width: 0};
     
@@ -1138,11 +1035,14 @@ function generateMap() {
             }
     
             if (best.size > 0) {
-                let fontSize = (sizeY * best.size) / (30 + 10) * 30;
+                let fontSize = (sizeY * best.size) / (30 + 16) * 30;
+                if (LIMIT_MAP_NAME_SIZE) {
+                    fontSize = Math.min(MAX_MAP_NAME_SIZE, fontSize);
+                }
     
                 blockMaximalRectangle[block] = {
-                    x: sizeX * best.x + fontSize / 30 * (-text.actualBoundingBoxLeft + 10),
-                    y: sizeY * best.y + fontSize / 30 * (Math.abs(text.actualBoundingBoxAscent) + 5),
+                    x: sizeX * (best.x + idealRatio * best.size / 2) - fontSize / 30 * text.width / 2,
+                    y: sizeY * (best.y + best.size / 2) + fontSize / 30 * Math.abs(text.actualBoundingBoxAscent) / 2,
                     fontSize: fontSize,
                     text: name,
                     owner: owner
@@ -1153,42 +1053,33 @@ function generateMap() {
 
     }
 
-    // Draw map
+    return [blocks, blockRun, blockOwner, blockSize, blockMaximalRectangle, blockCount];
 
-    canvas.width = MAP_WIDTH;
-    canvas.height = MAP_HEIGHT;
+}
 
-    canvas.style.width = '1100px';
-    canvas.style.height = '1100px';
+function lerp(p0, p1, a0, b0, a1, b1) {
 
-    ctx.filter = 'none';
+    a0 = a0 || 0;
+    b0 = b0 || 0;
+    a1 = a1 || 0;
+    b1 = b1 || 0;
 
-    ctx.fillStyle = 'rgba(0,0,0,0)';
-    ctx.globalCompositeOperation = 'copy';
-    ctx.beginPath();
-    ctx.rect(0, 0, MAP_WIDTH, MAP_HEIGHT);
-    ctx.fill();
+    a0 -= b0;
+    a1 -= b1;
+
+    if (a0 == a1) return 0.5 * p0 + 0.5 * p1;
+
+    let t = (0 - a0) / (a1 - a0);
+    if (!Number.isFinite(t)) t = 0.5;
+
+    return (1 - t) * p0 + t * p1;
+
+}
+
+function drawCountryFill(ctx, colors, map, values, sizeX, sizeY) {
+    
     ctx.globalCompositeOperation = 'source-over';
-
-    function lerp(p0, p1, a0, b0, a1, b1) {
-
-        a0 = a0 || 0;
-        b0 = b0 || 0;
-        a1 = a1 || 0;
-        b1 = b1 || 0;
-
-        a0 -= b0;
-        a1 -= b1;
-
-        if (a0 == a1) return 0.5 * p0 + 0.5 * p1;
-
-        let t = (0 - a0) / (a1 - a0);
-        if (!Number.isFinite(t)) t = 0.5;
-
-        return (1 - t) * p0 + t * p1;
-
-    }
-
+    ctx.globalAlpha = 1.0;
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
     ctx.strokeWidth = 1.0;
@@ -1417,12 +1308,23 @@ function generateMap() {
 
     }
 
+}
+
+function drawEdgeBorders(ctx, map, values, sizeX, sizeY) {
+
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
-
     ctx.globalCompositeOperation = 'source-atop';
+    ctx.globalAlpha = 1.0;
 
     for (let border of EDGE_BORDERS) {
+
+        if (LIGHT_BORDERS) {
+            if (!(border.light)) continue;
+        } else {
+            if (!(border.regular)) continue;
+        }
+
         ctx.strokeStyle = border.color;
         ctx.lineWidth = border.width;
         ctx.beginPath();
@@ -1559,14 +1461,27 @@ function generateMap() {
 
         }
 
-        ctx.fill();
         ctx.stroke();
 
     }
 
+}
+
+function drawCountryBorders(ctx, map, values, sizeX, sizeY) {
+
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
     ctx.globalCompositeOperation = 'source-over';
+    ctx.globalAlpha = 1.0;
 
     for (let border of BORDERS) {
+        
+        if (LIGHT_BORDERS) {
+            if (!(border.light)) continue;
+        } else {
+            if (!(border.regular)) continue;
+        }
+    
         ctx.strokeStyle = border.color;
         ctx.lineWidth = border.width;
         ctx.beginPath();
@@ -1705,10 +1620,137 @@ function generateMap() {
 
         }
 
-        ctx.fill();
         ctx.stroke();
 
     }
+    
+    ctx.fillStyle = BORDERS[BORDERS.length - 1].color;
+    ctx.beginPath();
+
+    let points = [[0, 0], [0, 0], [0, 0], [0, 0]];
+
+    for (let j = 0; j + 1 < RES_Y; j++) {
+
+        for (let i = 0; i + 1 < RES_X; i++) {
+
+            let value_UL = values[i][j];
+            let value_UR = values[i + 1][j];
+            let value_BL = values[i][j + 1];
+            let value_BR = values[i + 1][j + 1];
+            
+            let xmin = sizeX * i;
+            let xmax = xmin + sizeX;
+            let ymin = sizeY * j;
+            let ymax = ymin + sizeY;
+
+            let UL = map[i][j];
+            let UR = map[i + 1][j];
+            let BL = map[i][j + 1];
+            let BR = map[i + 1][j + 1];
+
+            if (value_UL.id == value_UR.id && value_UR.id == value_BL.id && value_BL.id == value_BR.id) {
+                continue;
+            }
+
+            if (value_UL.id == value_BR.id && value_UR.id == value_BL.id) {
+                continue;
+            }
+
+            let a = value_UL.id;
+            let b = value_UR.id;
+            let c = value_BR.id;
+            let d = value_BL.id;
+
+            if (a == null) a == UNOWNED_ID;
+            if (b == null) b == UNOWNED_ID;
+            if (c == null) c == UNOWNED_ID;
+            if (d == null) d == UNOWNED_ID;
+
+            let topMid = lerp(xmin, xmax, value_UL.value, (UL[b] || 0), (UR[a] || 0), value_UR.value);
+            let bottomMid = lerp(xmax, xmin, value_BR.value, (BR[d] || 0), (BL[c] || 0), value_BL.value);
+
+            let rightMid = lerp(ymin, ymax, value_UR.value, (UR[c] || 0), (BR[b] || 0), value_BR.value);
+            let leftMid = lerp(ymax, ymin, value_BL.value, (BL[a] || 0), (UL[d] || 0), value_UL.value);
+
+            let numPoints = 0;
+
+            if ((a != b) && !(a == UNOWNED_ID || b == UNOWNED_ID)) {
+                points[numPoints][0] = topMid;
+                points[numPoints++][1] = ymin;
+            }
+
+            if ((b != c) && !(b == UNOWNED_ID || c == UNOWNED_ID)) {
+                points[numPoints][0] = xmax;
+                points[numPoints++][1] = rightMid;
+            }
+
+            if ((c != d) && !(c == UNOWNED_ID || d == UNOWNED_ID)) {
+                points[numPoints][0] = bottomMid;
+                points[numPoints++][1] = ymax;
+            }
+
+            if ((d != a) && !(d == UNOWNED_ID || a == UNOWNED_ID)) {
+                points[numPoints][0] = xmin;
+                points[numPoints++][1] = leftMid;
+            }
+
+            if (numPoints < 3) continue;
+
+            ctx.moveTo(points[0][0], points[0][1]);
+            for (let i = 1; i < numPoints; i++) {
+                ctx.lineTo(points[i][0], points[i][1]);
+            }
+            ctx.closePath();
+
+        }
+
+    }
+
+    ctx.fill();
+
+}
+
+function fillStar(ctx, x, y, radius) {
+
+    function starPoint(n) {
+        ctx.lineTo(
+            x + radius * Math.cos((n/5 + 1/2) * Math.PI),
+            y - radius * Math.sin((n/5 + 1/2) * Math.PI)
+        );
+    }
+
+    ctx.beginPath();
+    ctx.moveTo(x, y - radius);
+    starPoint(4);
+    starPoint(8);
+    starPoint(2);
+    starPoint(6);
+    ctx.closePath();
+    ctx.fill('nonzero');
+
+}
+
+function drawGatewayMarker(ctx, x, y, size) {
+    let radius = 1.05 * size;
+    ctx.lineWidth = 0.65 * Math.min(size, (CAPITAL_OUTER_RADIUS + UPGRADED_RADIUS) / 2);
+    ctx.beginPath();
+
+    ctx.moveTo(x - radius, y - radius);
+    ctx.lineTo(x + radius, y + radius);
+
+    ctx.moveTo(x + radius, y - radius);
+    ctx.lineTo(x - radius, y + radius);
+
+    ctx.strokeStyle = ctx.fillStyle;
+    ctx.lineCap = 'round';
+    ctx.stroke();
+}
+
+function drawGeography(ctx, colors, stars, hyperlanes) {
+
+    ctx.lineJoin = 'round';
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.globalAlpha = 1.0;
 
     ctx.strokeStyle = HYPERLANE_COLOR;
     ctx.lineWidth = HYPERLANE_WIDTH;
@@ -1720,11 +1762,28 @@ function generateMap() {
         let x2 = stars[hyperlane.to].x;
         let y2 = stars[hyperlane.to].y;
 
-        ctx.moveTo(x1, y1);
-        ctx.lineTo(x2, y2);
+        let length = Math.hypot(x2 - x1, y2 - y1);
+        if (length <= 0) continue;
+
+        dx = (x2 - x1) / length;
+        dy = (y2 - y1) / length;
+
+        if (stars[hyperlane.from].upgraded) { 
+            ctx.moveTo(x1, y1);
+        } else {
+            ctx.moveTo(x1 + dx * Math.min(STAR_PADDING, length / 2), y1 + dy * Math.min(STAR_PADDING, length / 2));   
+        }
+
+        if (stars[hyperlane.to].upgraded) { 
+            ctx.lineTo(x2, y2);
+        } else {
+            ctx.lineTo(x2 - dx * Math.min(STAR_PADDING, length / 2), y2 - dy * Math.min(STAR_PADDING, length / 2));   
+        }
     }
     
+    ctx.lineCap = 'butt';
     ctx.stroke();
+    ctx.lineCap = 'round';
 
     for (let [id, star] of Object.entries(stars)) {
 
@@ -1736,21 +1795,16 @@ function generateMap() {
             continue;
         }
 
-        let owner = star.owner;
-        if (owner == null) owner = UNOWNED_ID;
-
-        ctx.fillStyle = (colors[owner] || MISSING_COLOR);
-        ctx.beginPath();
-        ctx.arc(star.x, star.y, STAR_PADDING, 0, 2 * Math.PI);
-        ctx.fill();
-
         ctx.fillStyle = star.populated ? POPULATED_COLOR : STAR_COLOR;
+        if (star.gateway) drawGatewayMarker(ctx, star.x, star.y, STAR_RADIUS);
+
         ctx.beginPath();
         ctx.arc(star.x, star.y, STAR_RADIUS, 0, 2 * Math.PI);
         ctx.fill();
 
-    }
+        if (star.gateway) drawGatewayMarker(ctx, star.x, star.y, STAR_RADIUS);
 
+    }
     
     for (let [id, star] of Object.entries(stars)) {
 
@@ -1761,9 +1815,13 @@ function generateMap() {
         if (star.upgraded) {
             
             ctx.fillStyle = star.populated ? POPULATED_COLOR : STAR_COLOR;
+            if (star.gateway) drawGatewayMarker(ctx, star.x, star.y, UPGRADED_RADIUS);
+
             ctx.beginPath();
             ctx.arc(star.x, star.y, UPGRADED_RADIUS, 0, 2 * Math.PI);
             ctx.fill();
+
+            if (star.gateway) drawGatewayMarker(ctx, star.x, star.y, UPGRADED_RADIUS);
 
         }
 
@@ -1774,6 +1832,8 @@ function generateMap() {
         if (star.capital) {
 
             ctx.fillStyle = POPULATED_COLOR;
+            if (star.gateway) drawGatewayMarker(ctx, star.x, star.y, (CAPITAL_OUTER_RADIUS + CAPITAL_INNER_RADIUS) / 2);
+
             ctx.beginPath();
             ctx.arc(star.x, star.y, CAPITAL_OUTER_RADIUS, 0, 2 * Math.PI);
             ctx.fill();
@@ -1785,192 +1845,391 @@ function generateMap() {
             ctx.beginPath();
             ctx.arc(star.x, star.y, CAPITAL_INNER_RADIUS, 0, 2 * Math.PI);
             ctx.fill();
+            
+            ctx.fillStyle = POPULATED_COLOR;
+            fillStar(ctx, star.x, star.y, CAPITAL_STAR_RADIUS);
 
-            function starPoint(n) {
-                ctx.lineTo(
-                    star.x + CAPITAL_STAR_RADIUS * Math.cos((n/5 + 1/2) * Math.PI),
-                    star.y - CAPITAL_STAR_RADIUS * Math.sin((n/5 + 1/2) * Math.PI)
-                );
+        }
+
+    }
+
+}
+
+function drawMapNames(ctx, blockMaximalRectangle) {
+
+    let canvas2 = document.getElementById('helperCanvas');
+    let ctx2 = canvas2.getContext('2d');
+
+    ctx2.lineJoin = 'round';
+    ctx2.lineCap = 'round';
+    ctx2.globalCompositeOperation = 'copy';
+
+    canvas2.width = MAP_WIDTH;
+    canvas2.height = MAP_HEIGHT;
+
+    ctx2.fillStyle = 'rgba(0,0,0,0)';
+    ctx2.beginPath();
+    ctx2.rect(0, 0, MAP_WIDTH, MAP_HEIGHT);
+    ctx2.fill();
+
+    ctx2.strokeStyle = MAP_NAME_STROKE;
+    ctx2.fillStyle = MAP_NAME_FILL;
+
+    for (let [block, rect] of Object.entries(blockMaximalRectangle)) {
+        if (rect == null || rect.fontSize < MIN_MAP_NAME_SIZE) continue;
+
+        ctx2.font = `${(ALT_NAME_STYLE) ? 'bold' : '500'} ${rect.fontSize}px ${(ALT_NAME_STYLE) ? MAP_FONT_ALT : MAP_FONT}`;
+        ctx2.lineWidth = MAP_NAME_STROKE_WIDTH * rect.fontSize;
+        ctx2.strokeText(rect.text, rect.x, rect.y);
+    }
+
+    for (let [block, rect] of Object.entries(blockMaximalRectangle)) {
+        if (rect == null || rect.fontSize < MIN_MAP_NAME_SIZE) continue;
+
+        ctx2.font = `${(ALT_NAME_STYLE) ? 'bold' : '500'} ${rect.fontSize}px ${(ALT_NAME_STYLE) ? MAP_FONT_ALT : MAP_FONT}`;
+        ctx2.lineWidth = MAP_NAME_STROKE_WIDTH * rect.fontSize;
+        ctx2.fillText(rect.text, rect.x, rect.y);
+    }
+
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.globalAlpha = MAP_NAME_ALPHA;
+    ctx.drawImage(canvas2, 0, 0);
+    ctx.globalAlpha = 1.0;
+
+}
+
+function drawMapMiddle(ctx, gamestate, innerRadius) {
+
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.globalAlpha = 1.0;
+
+    ctx.fillStyle = INNER_CIRCLE_COLOR;
+
+    ctx.beginPath();
+    ctx.arc(MAP_WIDTH / 2, MAP_HEIGHT / 2, innerRadius, 0, 2 * Math.PI);
+    ctx.fill();
+
+    ctx.font = `bold 30px ${MAP_MIDDLE_FONT}`;
+    let galaxyName = document.getElementById('galaxyName').value;
+    let text = ctx.measureText(galaxyName);
+    let fontSize = 30 * 0.75 * 2 * innerRadius / Math.max(60, text.width);
+
+    ctx.font = `bold ${fontSize}px ${MAP_MIDDLE_FONT}`;
+    ctx.fillStyle = MAP_MIDDLE_TEXT_COLOR;
+
+    ctx.fillText(galaxyName, MAP_WIDTH / 2 - fontSize / 30 * text.width / 2, MAP_HEIGHT / 2 - 0.35 * innerRadius); // for some reason center align is buggy
+
+    let dateText = (''+(gamestate.date)).replaceAll('"', '');
+
+    ctx.font = `bold 30px ${MAP_MIDDLE_FONT}`;
+    text = ctx.measureText(dateText);
+    fontSize = 0.18 * innerRadius;
+    ctx.font = `bold ${fontSize}px ${MAP_MIDDLE_FONT}`;
+    ctx.fillText(dateText, MAP_WIDTH / 2 - fontSize / 30 * text.width / 2, MAP_HEIGHT / 2 - 0.1 * innerRadius);
+
+    fontSize = 0.08 * innerRadius;
+    ctx.font = `${fontSize}px ${MAP_MIDDLE_FONT}`;
+
+    let x = MAP_WIDTH / 2 - 0.56 * innerRadius;
+    let heights = [0.07, 0.22, 0.37, 0.53, 0.67];
+
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'butt';
+    ctx.strokeStyle = HYPERLANE_COLOR;
+    ctx.lineWidth = HYPERLANE_WIDTH;
+    ctx.beginPath();
+    ctx.moveTo(x, MAP_HEIGHT / 2);
+    ctx.lineTo(x, MAP_HEIGHT / 2 + heights[0] * innerRadius - STAR_PADDING);
+    ctx.moveTo(x, MAP_HEIGHT / 2 + heights[0] * innerRadius + STAR_PADDING);
+    ctx.lineTo(x, MAP_HEIGHT / 2 + heights[1] * innerRadius - STAR_PADDING);
+    ctx.moveTo(x, MAP_HEIGHT / 2 + heights[1] * innerRadius + STAR_PADDING);
+    ctx.lineTo(x, MAP_HEIGHT / 2 + heights[2] * innerRadius - STAR_PADDING);
+    ctx.moveTo(x, MAP_HEIGHT / 2 + heights[2] * innerRadius + STAR_PADDING);
+    ctx.lineTo(x, MAP_HEIGHT / 2 + 0.77 * innerRadius);
+    ctx.stroke();
+
+    let y = MAP_HEIGHT / 2 + heights[0] * innerRadius;
+
+    ctx.fillStyle = STAR_COLOR;
+    ctx.beginPath();
+    ctx.arc(x, y, STAR_RADIUS, 0, 2 * Math.PI);
+    ctx.fill();
+
+    ctx.fillStyle = MAP_MIDDLE_TEXT_COLOR;
+    ctx.fillText('System', x + 0.11 * innerRadius, y + 0.03 * innerRadius);
+
+    y = MAP_HEIGHT / 2 + heights[1] * innerRadius;
+
+    ctx.fillStyle = POPULATED_COLOR;
+    ctx.beginPath();
+    ctx.arc(x, y, STAR_RADIUS, 0, 2 * Math.PI);
+    ctx.fill();
+
+    ctx.fillStyle = MAP_MIDDLE_TEXT_COLOR;
+    ctx.fillText('Populated System', x + 0.11 * innerRadius, y + 0.03 * innerRadius);
+
+    y = MAP_HEIGHT / 2 + heights[2] * innerRadius;
+
+    ctx.fillStyle = STAR_COLOR;
+    drawGatewayMarker(ctx, x, y, STAR_RADIUS);
+    ctx.beginPath();
+    ctx.arc(x, y, STAR_RADIUS, 0, 2 * Math.PI);
+    ctx.fill();
+
+    ctx.fillStyle = MAP_MIDDLE_TEXT_COLOR;
+    ctx.fillText('System with Gateway', x + 0.11 * innerRadius, y + 0.03 * innerRadius);
+
+    y = MAP_HEIGHT / 2 + heights[3] * innerRadius;
+
+    ctx.fillStyle = POPULATED_COLOR;
+    ctx.beginPath();
+    ctx.arc(x, y, UPGRADED_RADIUS, 0, 2 * Math.PI);
+    ctx.fill();
+
+    ctx.fillStyle = MAP_MIDDLE_TEXT_COLOR;
+    ctx.fillText('System with Upgraded Starbase', x + 0.11 * innerRadius, y + 0.03 * innerRadius);
+
+    y = MAP_HEIGHT / 2 + heights[4] * innerRadius;
+
+    ctx.fillStyle = POPULATED_COLOR;
+    ctx.beginPath();
+    ctx.arc(x, y, (CAPITAL_OUTER_RADIUS + CAPITAL_INNER_RADIUS) / 2, 0, 2 * Math.PI);
+    ctx.strokeWidth = CAPITAL_OUTER_RADIUS - CAPITAL_INNER_RADIUS;
+    ctx.strokeStyle = POPULATED_COLOR;
+    ctx.stroke();
+
+    ctx.fillStyle = POPULATED_COLOR;
+    fillStar(ctx, x, y, CAPITAL_STAR_RADIUS);
+
+    ctx.fillStyle = MAP_MIDDLE_TEXT_COLOR;
+    ctx.fillText('Capital System', x + 0.11 * innerRadius, y + 0.03 * innerRadius);
+    
+}
+
+function generateMap() {
+
+    // Get settings, canvas, save file data
+
+    USE_FLAG_COLORS = document.getElementById('useFlagColors').checked;
+    USE_FEDERATION_COLORS = document.getElementById('useFederationColors').checked;
+    DRAW_MAP_NAMES = document.getElementById('drawMapNames').checked;
+    ALT_NAME_STYLE = document.getElementById('altNameStyle').checked;
+    LIMIT_MAP_NAME_SIZE = document.getElementById('limitMapNameSize').checked;
+    DRAW_MAP_MIDDLE = document.getElementById('drawMapMiddle').checked;
+    USE_HUBBLE = document.getElementById('useHubble').checked;
+    LIGHT_BORDERS = document.getElementById('lightBorders').checked;
+    SMOOTH_BORDERS = document.getElementById('smoothBorders').checked;
+    PAINT_SCALE_FACTOR = document.getElementById('paintScale').value / 100;
+
+    const canvas = document.getElementById('galaxyMap');
+    const ctx = canvas.getContext('2d');
+
+    const gamestate = saveGame.gamestate;
+    const meta = saveGame.meta;
+
+    // Get map data
+
+    let stars = {};
+    let hyperlanes = {};
+
+    let xmin = Infinity;
+    let xmax = -Infinity;
+    let ymin = Infinity;
+    let ymax = -Infinity;
+
+    let innerRadius = Infinity;
+
+    let starbaseCount = {};
+
+    for (let [id, star] of Object.entries(gamestate.galactic_object)) {
+
+        if (id == ENTRIES_KEY) continue;
+
+        id = Math.round(+id);
+
+        if (star.coordinate == null) continue;
+
+        xmin = Math.min(xmin, +star.coordinate.x);
+        xmax = Math.max(xmax, +star.coordinate.x);
+        ymin = Math.min(ymin, +star.coordinate.y);
+        ymax = Math.max(ymax, +star.coordinate.y);
+
+        innerRadius = Math.min(innerRadius, Math.hypot(+star.coordinate.x, +star.coordinate.y));
+
+        stars[id] = {
+            x: +star.coordinate.x,
+            y: +star.coordinate.y,
+            owner: null,
+            hyperlanes: !(star.hyperlane == null || star.hyperlane.length === 0),
+            capital: false,
+            populated: false,
+            gateway: false,
+        };
+
+        if (star.hyperlane != null) {
+            for (let hyperlane of star.hyperlane) {
+                let from = id;
+                let to = Math.round(+hyperlane.to);
+    
+                if (from > to) {
+                    let tmp = from;
+                    from = to;
+                    to = tmp;
+                }
+    
+                let key = `${from},${to}`;
+    
+                hyperlanes[key] = {
+                    from: from,
+                    to: to
+                };
+            }
+        }
+
+        if (star.starbase != null) {
+            if (gamestate.starbase_mgr.starbases[star.starbase] == null) continue;
+            if (gamestate.starbase_mgr.starbases[star.starbase].owner == null) continue;
+
+            let owner = gamestate.starbase_mgr.starbases[star.starbase].owner
+            stars[id].owner = owner;
+            if (starbaseCount[owner] == null) starbaseCount[owner] = 0;
+            starbaseCount[owner]++;
+
+            stars[id].upgraded = (gamestate.starbase_mgr.starbases[star.starbase].level != '"starbase_level_outpost"');
+        }
+
+        if (star.bypasses != null && gamestate.bypasses != null) {
+            for (let bypass of star.bypasses) {
+                if (gamestate.bypasses[bypass] != null && gamestate.bypasses[bypass].type == '"gateway"') {
+                    stars[id].gateway = true;
+                    continue;
+                }
+            }
+        }
+
+    }
+
+    if (gamestate.planets != null && gamestate.planets.planet != null) {
+        for (let [id, planet] of Object.entries(gamestate.planets.planet)) {
+            if (id === ENTRIES_KEY) continue;
+
+            if (!Array.isArray(planet.pop)) continue;
+            if (planet.pop.length < 1) continue;
+
+            if (planet.coordinate == null) continue;
+            if (planet.coordinate.origin == null) continue;
+
+            let system = +(planet.coordinate.origin);
+            if (stars[system] == null) continue;
+            stars[system].populated = true;
+        }
+    }
+
+    let [colors, colorCount] = getColorsAndCapitalSystems(gamestate, starbaseCount, stars, USE_FEDERATION_COLORS);
+
+    // Generate map
+
+    const sizeX = MAP_WIDTH / (RES_X - 1);
+    const sizeY = MAP_HEIGHT / (RES_Y - 1);
+
+    let scale = Math.min(
+        (MAP_WIDTH / 2 - (SYSTEM_RADIUS - UNOWNED_VALUE) - PADDING) / Math.max(Math.abs(xmax), Math.abs(xmin)),
+        (MAP_HEIGHT / 2 - (SYSTEM_RADIUS - UNOWNED_VALUE) - PADDING) / Math.max(Math.abs(ymax), Math.abs(ymin))
+    );
+
+    innerRadius = Math.max(0, Math.min(MAP_WIDTH, MAP_HEIGHT, scale * innerRadius - INNER_PADDING));
+
+    let scaleFactor = scale / PAINT_SCALE_FACTOR;
+
+    let ax = MAP_WIDTH / 2;
+    let ay = MAP_HEIGHT / 2;
+
+    for (let [id, star] of Object.entries(stars)) {
+        star.x = -scale * star.x + ax;
+        star.y = scale * star.y + ay
+    }
+
+    let map = getMap(stars, hyperlanes, scaleFactor, sizeX, sizeY);
+
+    if (SMOOTH_BORDERS) map = smoothMap(map);
+
+    let values = [];
+    for (let i = 0; i < RES_X; i++) {
+        let column = [];
+        for (let j = 0; j < RES_Y; j++) {
+
+            let value = {id: UNOWNED_ID, value: 0};
+            for (let [id, val] of Object.entries(map[i][j])) {
+                if (val > value.value) {
+                    value.id = id;
+                    value.value = val;
+                }
             }
 
-            ctx.fillStyle = POPULATED_COLOR;
-            ctx.beginPath();
-            ctx.moveTo(star.x, star.y - CAPITAL_STAR_RADIUS);
-            starPoint(4);
-            starPoint(8);
-            starPoint(2);
-            starPoint(6);
-            ctx.closePath();
-            ctx.fill('nonzero');
-
+            column.push(value);
         }
-
+        values.push(column);
     }
 
-    if (DRAW_MAP_NAMES) {
+    let [
+        blocks,
+        blockRun,
+        blockOwner,
+        blockSize,
+        blockMaximalRectangle,
+        blockCount
+    ] = getBlocksAndMapNames(ctx, gamestate, values, DRAW_MAP_NAMES, sizeX, sizeY);
 
-        let stroke = ctx.createLinearGradient(MAP_WIDTH / 2, 0, MAP_WIDTH / 2, MAP_HEIGHT); // Use flat gradient to improve rendering on iOS Safari
-        stroke.addColorStop(0, MAP_NAME_STROKE);
-        stroke.addColorStop(1, MAP_NAME_STROKE);
-        ctx.strokeStyle = stroke;
+    // Draw map
 
-        for (let [block, rect] of Object.entries(blockMaximalRectangle)) {
-            if (rect == null || rect.fontSize < MIN_MAP_NAME_SIZE) continue;
+    canvas.width = MAP_WIDTH;
+    canvas.height = MAP_HEIGHT;
 
-            ctx.fillStyle = MAP_NAME_FILL;
-            ctx.font = `bold ${rect.fontSize}px ${MAP_FONT}`;
-            ctx.lineWidth = (ALT_NAME_STYLE ? MAP_NAME_STROKE_WIDTH_ALT : MAP_NAME_STROKE_WIDTH) * rect.fontSize;
-            ctx.strokeText(rect.text, rect.x, rect.y);
-            ctx.fillText(rect.text, rect.x, rect.y);
-        }
+    canvas.style.width = '1100px';
+    canvas.style.height = '1100px';
 
-    }
+    ctx.filter = 'none';
 
-    if (DRAW_MAP_MIDDLE) {
-
-        innerRadius -= scaleFactor * (SYSTEM_RADIUS - UNOWNED_VALUE / 2) / 2.75;
-        innerRadius = Math.max(100, innerRadius);
-
-        ctx.fillStyle = INNER_CIRCLE_COLOR;
-
-        ctx.beginPath();
-        ctx.arc(MAP_WIDTH / 2, MAP_HEIGHT / 2, innerRadius, 0, 2 * Math.PI);
-        ctx.fill();
-
-        ctx.font = `bold 30px ${MAP_MIDDLE_FONT}`;
-        let galaxyName = document.getElementById('galaxyName').value;
-        let text = ctx.measureText(galaxyName);
-        let fontSize = 30 * 0.75 * 2 * innerRadius / Math.max(60, text.width);
-
-        ctx.font = `bold ${fontSize}px ${MAP_MIDDLE_FONT}`;
-        ctx.fillStyle = MAP_MIDDLE_TEXT_COLOR;
-
-        ctx.fillText(galaxyName, MAP_WIDTH / 2 - fontSize / 30 * text.width / 2, MAP_HEIGHT / 2 - 0.35 * innerRadius); // for some reason center align is buggy
-
-        let dateText = (''+(gamestate.date)).replaceAll('"', '');
-
-        ctx.font = `bold 30px ${MAP_MIDDLE_FONT}`;
-        text = ctx.measureText(dateText);
-        fontSize = 0.18 * innerRadius;
-        ctx.font = `bold ${fontSize}px ${MAP_MIDDLE_FONT}`;
-        ctx.fillText(dateText, MAP_WIDTH / 2 - fontSize / 30 * text.width / 2, MAP_HEIGHT / 2 - 0.1 * innerRadius);
-
-        fontSize = 0.08 * innerRadius;
-        ctx.font = `${fontSize}px ${MAP_MIDDLE_FONT}`;
-
-        let x = MAP_WIDTH / 2 - 0.6 * innerRadius;
-        let heights = [0.07, 0.21, 0.35, 0.49, 0.63];
-
-        ctx.strokeStyle = HYPERLANE_COLOR;
-        ctx.lineWidth = HYPERLANE_WIDTH;
-        ctx.beginPath();
-        ctx.moveTo(x, MAP_HEIGHT / 2);
-        ctx.lineTo(x, MAP_HEIGHT / 2 + 0.72 * innerRadius);
-        ctx.stroke();
-
-        let y = MAP_HEIGHT / 2 + heights[0] * innerRadius;
-
-        ctx.fillStyle = BACKGROUND_COLOR;
-        ctx.beginPath();
-        ctx.arc(x, y, STAR_PADDING, 0, 2 * Math.PI);
-        ctx.fill();
-
-        ctx.fillStyle = STAR_COLOR;
-        ctx.beginPath();
-        ctx.arc(x, y, STAR_RADIUS, 0, 2 * Math.PI);
-        ctx.fill();
-
-        ctx.fillStyle = MAP_MIDDLE_TEXT_COLOR;
-        ctx.fillText('System', x + 0.08 * innerRadius, y + 0.03 * innerRadius);
-
-        y = MAP_HEIGHT / 2 + heights[1] * innerRadius;
-
-        ctx.fillStyle = BACKGROUND_COLOR;
-        ctx.beginPath();
-        ctx.arc(x, y, STAR_PADDING, 0, 2 * Math.PI);
-        ctx.fill();
-
-        ctx.fillStyle = POPULATED_COLOR;
-        ctx.beginPath();
-        ctx.arc(x, y, STAR_RADIUS, 0, 2 * Math.PI);
-        ctx.fill();
-
-        ctx.fillStyle = MAP_MIDDLE_TEXT_COLOR;
-        ctx.fillText('Populated System', x + 0.08 * innerRadius, y + 0.03 * innerRadius);
-
-        y = MAP_HEIGHT / 2 + heights[2] * innerRadius;
-
-        ctx.fillStyle = STAR_COLOR;
-        ctx.beginPath();
-        ctx.arc(x, y, UPGRADED_RADIUS, 0, 2 * Math.PI);
-        ctx.fill();
-
-        ctx.fillStyle = MAP_MIDDLE_TEXT_COLOR;
-        ctx.fillText('System w/ Upgraded Starbase', x + 0.08 * innerRadius, y + 0.03 * innerRadius);
-
-        y = MAP_HEIGHT / 2 + heights[3] * innerRadius;
-
-        ctx.fillStyle = POPULATED_COLOR;
-        ctx.beginPath();
-        ctx.arc(x, y, UPGRADED_RADIUS, 0, 2 * Math.PI);
-        ctx.fill();
-
-        ctx.fillStyle = MAP_MIDDLE_TEXT_COLOR;
-        ctx.fillText('Pop. System w/ Upgraded Starbase', x + 0.08 * innerRadius, y + 0.03 * innerRadius);
-
-        y = MAP_HEIGHT / 2 + heights[4] * innerRadius;
-
-        ctx.fillStyle = POPULATED_COLOR;
-        ctx.beginPath();
-        ctx.arc(x, y, CAPITAL_OUTER_RADIUS, 0, 2 * Math.PI);
-        ctx.fill();
-
-        ctx.fillStyle = BACKGROUND_COLOR;
-        ctx.beginPath();
-        ctx.arc(x, y, CAPITAL_INNER_RADIUS, 0, 2 * Math.PI);
-        ctx.fill();
-
-        function starPoint2(n) {
-            ctx.lineTo(
-                x + CAPITAL_STAR_RADIUS * Math.cos((n/5 + 1/2) * Math.PI),
-                y - CAPITAL_STAR_RADIUS * Math.sin((n/5 + 1/2) * Math.PI)
-            );
-        }
-
-        ctx.fillStyle = POPULATED_COLOR;
-        ctx.beginPath();
-        ctx.moveTo(x, y - CAPITAL_STAR_RADIUS);
-        starPoint2(4);
-        starPoint2(8);
-        starPoint2(2);
-        starPoint2(6);
-        ctx.closePath();
-        ctx.fill('nonzero');
-
-        ctx.fillStyle = MAP_MIDDLE_TEXT_COLOR;
-        ctx.fillText('Capital System', x + 0.08 * innerRadius, y + 0.03 * innerRadius);
-
-    }
-
-    ctx.globalCompositeOperation = 'destination-over';
-
-    ctx.fillStyle = BACKGROUND_COLOR;
+    ctx.fillStyle = 'rgba(0,0,0,0)';
+    ctx.globalCompositeOperation = 'copy';
     ctx.beginPath();
     ctx.rect(0, 0, MAP_WIDTH, MAP_HEIGHT);
     ctx.fill();
 
+    drawCountryFill(ctx, colors, map, values, sizeX, sizeY);
+
+    drawEdgeBorders(ctx, map, values, sizeX, sizeY);
+
+    drawCountryBorders(ctx, map, values, sizeX, sizeY);
+
+    drawGeography(ctx, colors, stars, hyperlanes);
+
+    if (DRAW_MAP_NAMES) drawMapNames(ctx, blockMaximalRectangle);
+    
+    innerRadius -= scaleFactor * (SYSTEM_RADIUS - UNOWNED_VALUE / 2) / 1.5;
+    innerRadius = Math.max(100, innerRadius);
+
+    if (DRAW_MAP_MIDDLE) drawMapMiddle(ctx, gamestate, innerRadius);
+
+    ctx.globalCompositeOperation = 'destination-over';
+
     if (USE_HUBBLE) {
+        ctx.fillStyle = BACKGROUND_COLOR;
+        ctx.beginPath();
+        ctx.rect(0, 0, MAP_WIDTH, MAP_HEIGHT);
+        ctx.fill();
+
         ctx.filter = BACKGROUND_FILTER;
         ctx.drawImage(BACKGROUND_IMAGE, 0, 0, MAP_WIDTH, MAP_HEIGHT);
         ctx.filter = 'none';
     } else {
+        /*
         ctx.fillStyle = SUBSTITUTE_BACKGROUND;
         ctx.beginPath();
         ctx.rect(0, 0, MAP_WIDTH, MAP_HEIGHT);
         ctx.fill();
+        */
     }
-
-    ctx.globalCompositeOperation = 'source-over';
 
 }
 

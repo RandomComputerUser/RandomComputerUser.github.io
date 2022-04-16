@@ -18,15 +18,16 @@ input[type="range"] {
 button {
     background-color: #d0d0d0;
     color: #081828;
-    font-weight: 600;
+    font-weight: 700;
+    font-family: "Barlow", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 .bold {
-    font-weight: 600;
+    font-weight: 500;
 }
 
 .semibold {
-    font-weight: 600;
+    font-weight: 500;
 }
 
 .big {
@@ -34,7 +35,7 @@ button {
 }
 
 .warning {
-    font-weight: 600;
+    font-weight: 500;
     color: #ff0;
 }
 
