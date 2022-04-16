@@ -9,10 +9,47 @@ function updatePaintScaleNumberDisplay(value) {
     document.getElementById('paintScaleNumberDisplay').innerHTML = ''+(document.getElementById('paintScale').value);
 }
 
+function updatePopScaleNumberDisplay(value) {
+    document.getElementById('popScaleNumberDisplay').innerHTML = ''+(document.getElementById('popScale').value);
+}
+
+// https://stackoverflow.com/a/47593316
+
+function xmur3(str) {
+    for(var i = 0, h = 1779033703 ^ str.length; i < str.length; i++) {
+        h = Math.imul(h ^ str.charCodeAt(i), 3432918353);
+        h = h << 13 | h >>> 19;
+    } return function() {
+        h = Math.imul(h ^ (h >>> 16), 2246822507);
+        h = Math.imul(h ^ (h >>> 13), 3266489909);
+        return (h ^= h >>> 16) >>> 0;
+    }
+}
+
+___seed = xmur3('RandomComputerUser');
+
+INITIAL_PRNG_STATE = [___seed(), ___seed(), ___seed(), ___seed()];
+
+// Pseudorandom number generator by Bob Jenkins
+function jsf32(a, b, c, d) {
+    return function() {
+        a |= 0; b |= 0; c |= 0; d |= 0;
+        var t = a - (b << 27 | b >>> 5) | 0;
+        a = b ^ (c << 17 | c >>> 15);
+        b = c + d | 0;
+        c = d + t | 0;
+        d = a + t | 0;
+        return (d >>> 0) / 4294967296;
+    }
+}
+
 ENTRIES_KEY = '___entries';
 UNOWNED_ID = -1000000000;
 
 CANVAS_SCALE = 2;
+
+POPS_PER_SYMBOL = 5;
+POP_SYMBOL_FILL = 'rgb(5,250,5)';
 
 MAP_FONT = '"Barlow Semi Condensed"';
 MAP_NAME_FILL = 'rgb(15,15,15)';
@@ -468,16 +505,18 @@ function createEntries(obj) {
 
 }
 
-function getColorsAndCapitalSystems(gamestate, starbaseCount, stars, federations) {
+function getColorsAndCapitalSystems(gamestate, mapMode, starbaseCount, stars, federations) {
 
-    function hsv(h, s, v, count) {
+    function hsv(h, s, v, count, raw=false) {
 
         // v = Math.max(0, Math.min(1, v + 0.25 * (Math.random() - 0.75)));
         // s = Math.max(0, Math.min(1, s + 0.25 * (Math.random() - 0.6)));
 
         count = +(count || 0);
-        v = Math.min(1.0, Math.max(0.2, 0.9 * v * (0.85 ** count) + 0.05));
-        s = 0.65 * s;
+        if (!raw) {
+            v = Math.min(1.0, Math.max(0.2, 0.9 * v * (0.85 ** count) + 0.05));
+            s = 0.65 * s;
+        }
 
         let r = 0.0;
         let g = 0.0;
@@ -520,7 +559,7 @@ function getColorsAndCapitalSystems(gamestate, starbaseCount, stars, federations
     }
 
     function randomColor() {
-        return hsv(Math.random(), 0.4 * Math.random() + 0.4, 0.3 * Math.random() + 0.45, 0);
+        return hsv(Math.random(), 0.4 * Math.random() + 0.4, 0.3 * Math.random() + 0.45, 0, false);
     }
 
     let colors = {};
@@ -545,6 +584,12 @@ function getColorsAndCapitalSystems(gamestate, starbaseCount, stars, federations
                 }
             }
 
+        }
+
+        let countryData = getCountryData(country, mapMode);
+        if (countryData.level != null) {
+            colors[id] = hsv(0.65, 0.7 - 0.38 * Math.max(0, 0.65 - countryData.level), 1.0 - 0.8 / 0.35 * Math.max(0, countryData.level - 0.65), 0, true);
+            continue;
         }
 
         if (country.flag != null && Array.isArray(country.flag.colors) && country.flag.colors.length > 2) {
@@ -873,7 +918,7 @@ function smoothMap(map) {
 
 }
 
-function getBlocksAndMapNames(ctx, gamestate, values, createMapNames, sizeX, sizeY) {
+function getBlocksAndMapNames(ctx, gamestate, mapMode, values, createMapNames, sizeX, sizeY) {
 
     let blocks = [];
     let blockRun = [];
@@ -985,9 +1030,7 @@ function getBlocksAndMapNames(ctx, gamestate, values, createMapNames, sizeX, siz
             if (gamestate.country[owner] == null) continue;
             if (gamestate.country[owner].name == null) continue;
     
-            let name = ''+(gamestate.country[owner].name);
-            name = name.replaceAll('"', '');
-            if (ALT_NAME_STYLE) name = (name.toLocaleUpperCase()).split('').join(' ');
+            let name = ''+(getCountryData(gamestate.country[owner], mapMode).data);
     
             if (name.length < 1) continue;
     
@@ -1054,6 +1097,93 @@ function getBlocksAndMapNames(ctx, gamestate, values, createMapNames, sizeX, siz
     }
 
     return [blocks, blockRun, blockOwner, blockSize, blockMaximalRectangle, blockCount];
+
+}
+
+function getPopGrid(starsObj, blocks, blockOwner, sizeX, sizeY) {
+
+    let stars = [];
+    for (let [id, star] of Object.entries(starsObj)) {
+        stars.push(star);
+    }
+
+    stars.sort((a, b) => (a.id - b.id));
+
+    stars.sort((a, b) => (b.population - a.population)); // Sorts from highest to lowest population
+
+    let popGrid = [];
+
+    for (let i = 0; i < RES_X - 1; i++) {
+        let column = [];
+        for (let j = 0; j < RES_Y - 1; j++) {
+            column.push(false);
+        }
+        popGrid.push(column);
+    }
+
+    let overflow = {};
+
+    let squareSize = Math.sqrt(sizeX * sizeY);
+
+    let random = jsf32(INITIAL_PRNG_STATE[0], INITIAL_PRNG_STATE[1], INITIAL_PRNG_STATE[2], INITIAL_PRNG_STATE[3]);
+
+    for (let system of stars) {
+
+        if (system.population < 1) continue;
+
+        let owner = system.owner;
+
+        if (owner == UNOWNED_ID || owner == null) continue;
+
+        let x = system.x;
+        let y = system.y;
+
+        let i = Math.floor(x / sizeX);
+        let j = Math.floor(y / sizeY);
+
+        if (i < 0 || i >= RES_X - 1 || j < 0 || j > RES_Y - 1) continue;
+        if (blocks[i][j] == -1) continue;
+        if (blockOwner[blocks[i][j]] != owner) continue;
+
+        let block = blocks[i][j];
+
+        if (overflow[owner] == null) {
+            overflow[owner] = system.population;
+        } else {
+            overflow[owner] += system.population;
+        }
+
+        let pops = overflow[owner];
+        let extraRadius = 0;
+        let fails = 0;
+
+        while (pops >= POPS_PER_SYMBOL && fails < 250 && extraRadius < 150) {
+
+            let radius = squareSize * (Math.sqrt(pops / POPS_PER_SYMBOL) / 0.75 + extraRadius) * (random() ** 2);
+            let angle = 2 * Math.PI * random();
+
+            let i = Math.floor((x + radius * Math.cos(angle)) / sizeX);
+            let j = Math.floor((y + radius * Math.sin(angle)) / sizeY);
+
+            if (i < 0 || i >= RES_X - 1 || j < 0 || j >= RES_Y - 1 || blocks[i][j] != block || popGrid[i][j]) {
+                fails += 1;
+                if (fails >= 25) {
+                    fails = 0;
+                    extraRadius += 2;
+                }
+                continue;
+            }
+
+            popGrid[i][j] = true;
+            pops -= POPS_PER_SYMBOL;
+
+        }
+
+        overflow[owner] = pops;
+
+    }
+
+    return popGrid;
 
 }
 
@@ -1746,6 +1876,21 @@ function drawGatewayMarker(ctx, x, y, size) {
     ctx.stroke();
 }
 
+function drawPopMarker(ctx, x, y, sizeX, sizeY, center=false) {
+
+    if (center) {
+        x -= sizeX / 2;
+        y -= sizeY / 2;
+    }
+
+    ctx.moveTo(x + 0.1 * sizeX, y + 0.1 * sizeY);
+    ctx.lineTo(x + 0.9 * sizeX, y + 0.1 * sizeY);
+    ctx.lineTo(x + 0.9 * sizeX, y + 0.9 * sizeY);
+    ctx.lineTo(x + 0.1 * sizeX, y + 0.9 * sizeY);
+    ctx.closePath();
+
+}
+
 function drawGeography(ctx, colors, stars, hyperlanes) {
 
     ctx.lineJoin = 'round';
@@ -1795,7 +1940,7 @@ function drawGeography(ctx, colors, stars, hyperlanes) {
             continue;
         }
 
-        ctx.fillStyle = star.populated ? POPULATED_COLOR : STAR_COLOR;
+        ctx.fillStyle = (star.population > 0) ? POPULATED_COLOR : STAR_COLOR;
         if (star.gateway) drawGatewayMarker(ctx, star.x, star.y, STAR_RADIUS);
 
         ctx.beginPath();
@@ -1814,7 +1959,7 @@ function drawGeography(ctx, colors, stars, hyperlanes) {
 
         if (star.upgraded) {
             
-            ctx.fillStyle = star.populated ? POPULATED_COLOR : STAR_COLOR;
+            ctx.fillStyle = (star.population > 0) ? POPULATED_COLOR : STAR_COLOR;
             if (star.gateway) drawGatewayMarker(ctx, star.x, star.y, UPGRADED_RADIUS);
 
             ctx.beginPath();
@@ -1895,6 +2040,31 @@ function drawMapNames(ctx, blockMaximalRectangle) {
     ctx.globalAlpha = MAP_NAME_ALPHA;
     ctx.drawImage(canvas2, 0, 0);
     ctx.globalAlpha = 1.0;
+
+}
+
+function drawPopGrid(ctx, popGrid, sizeX, sizeY) {
+
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.fillStyle = POP_SYMBOL_FILL;
+
+    ctx.beginPath();
+
+    for (let i = 0; i < RES_X - 1; i++) {
+
+        let column = popGrid[i];
+
+        for (let j = 0; j < RES_Y - 1; j++) {
+
+            if (column[j]) {
+                drawPopMarker(ctx, sizeX * i, sizeY * j, sizeX, sizeY);
+            }
+
+        }
+
+    }
+
+    ctx.fill();
 
 }
 
@@ -1983,7 +2153,7 @@ function drawMapMiddle(ctx, gamestate, innerRadius) {
 
     y = MAP_HEIGHT / 2 + heights[3] * innerRadius;
 
-    ctx.fillStyle = POPULATED_COLOR;
+    ctx.fillStyle = STAR_COLOR;
     ctx.beginPath();
     ctx.arc(x, y, UPGRADED_RADIUS, 0, 2 * Math.PI);
     ctx.fill();
@@ -2008,6 +2178,62 @@ function drawMapMiddle(ctx, gamestate, innerRadius) {
     
 }
 
+function getCountryData(country, mapMode) {
+
+    function logScale(value, min, max) {
+
+        value = Math.max(min, value);
+        value = Math.min(max, value);
+
+        let scaled = Math.log(value / min);
+        scaled /= Math.log(max / min);
+
+        scaled = Math.max(0, Math.min(1, scaled));
+
+        return scaled ** 0.5;
+
+    }
+
+    let pops = +(country.employable_pops || 0);
+    let military = +(country.military_power || 0);
+    let economy = +(country.economy_power || 0);
+    let technology = +(country.tech_power || 0);
+
+    let countryName = ''+(country.name || 'Unknown');
+    countryName = countryName.replaceAll('"', '');
+    if (ALT_NAME_STYLE) countryName = (countryName.toLocaleUpperCase()).split('').join(' ');
+
+    switch (mapMode) {
+        case 'pops':
+            return {
+                data: Math.round(pops),
+                level: logScale(pops, 10, 10000)
+            }
+        case 'military':
+            return {
+                data: Math.round(military),
+                level: logScale(military, 100, 1e7)
+            }
+        case 'economy':
+            return {
+                data: Math.round(economy),
+                level: logScale(economy, 200, 200000)
+            }
+        case 'technology':
+            return {
+                data: Math.round(technology),
+                level: logScale(technology, 240, 240000)
+            }
+        case 'normal':
+        default:
+            return {
+                data: countryName,
+                level: null
+            };
+    }
+
+}
+
 function generateMap() {
 
     // Get settings, canvas, save file data
@@ -2022,6 +2248,14 @@ function generateMap() {
     LIGHT_BORDERS = document.getElementById('lightBorders').checked;
     SMOOTH_BORDERS = document.getElementById('smoothBorders').checked;
     PAINT_SCALE_FACTOR = document.getElementById('paintScale').value / 100;
+    POPS_PER_SYMBOL = Math.round(+(document.getElementById('popScale').value));
+
+    let mapMode = 'normal';
+    if (document.getElementById('popMapMode').checked) mapMode = 'pops';
+    else if (document.getElementById('militaryMapMode').checked) mapMode = 'military';
+    else if (document.getElementById('economyMapMode').checked) mapMode = 'economy';
+    else if (document.getElementById('technologyMapMode').checked) mapMode = 'technology';
+    else if (document.getElementById('popDensityMapMode').checked) mapMode = 'popDensity';
 
     const canvas = document.getElementById('galaxyMap');
     const ctx = canvas.getContext('2d');
@@ -2064,8 +2298,9 @@ function generateMap() {
             owner: null,
             hyperlanes: !(star.hyperlane == null || star.hyperlane.length === 0),
             capital: false,
-            populated: false,
+            population: 0,
             gateway: false,
+            id: id
         };
 
         if (star.hyperlane != null) {
@@ -2123,11 +2358,13 @@ function generateMap() {
 
             let system = +(planet.coordinate.origin);
             if (stars[system] == null) continue;
-            stars[system].populated = true;
+            if (starbaseCount[planet.owner] == null) continue;
+            if (starbaseCount[planet.owner] < 1) continue;
+            stars[system].population += planet.pop.length;
         }
     }
 
-    let [colors, colorCount] = getColorsAndCapitalSystems(gamestate, starbaseCount, stars, USE_FEDERATION_COLORS);
+    let [colors, colorCount] = getColorsAndCapitalSystems(gamestate, mapMode, starbaseCount, stars, USE_FEDERATION_COLORS);
 
     // Generate map
 
@@ -2180,7 +2417,10 @@ function generateMap() {
         blockSize,
         blockMaximalRectangle,
         blockCount
-    ] = getBlocksAndMapNames(ctx, gamestate, values, DRAW_MAP_NAMES, sizeX, sizeY);
+    ] = getBlocksAndMapNames(ctx, gamestate, mapMode, values, DRAW_MAP_NAMES, sizeX, sizeY);
+
+    let popGrid = [];
+    if (mapMode === 'popDensity') popGrid = getPopGrid(stars, blocks, blockOwner, sizeX, sizeY);
 
     // Draw map
 
@@ -2207,6 +2447,8 @@ function generateMap() {
     drawGeography(ctx, colors, stars, hyperlanes);
 
     if (DRAW_MAP_NAMES) drawMapNames(ctx, blockMaximalRectangle);
+
+    if (mapMode === 'popDensity') drawPopGrid(ctx, popGrid, sizeX, sizeY);
     
     innerRadius -= scaleFactor * (SYSTEM_RADIUS - UNOWNED_VALUE / 2) / 1.5;
     innerRadius = Math.max(100, innerRadius);

@@ -65,6 +65,7 @@
     <label for="smoothBorders">Rounder borders (good increase in quality, takes longer to generate)</label>
 
     <br>
+    <br>
 
     <input type="range" min="200" max="500" value="325" class="slider" id="paintScale" name="paintScale" oninput="updatePaintScaleNumberDisplay()">
     <span id="paintScaleNumberDisplay" class="big"></span>
@@ -72,7 +73,38 @@
         document.getElementById('paintScaleNumberDisplay').innerHTML = ''+(document.getElementById('paintScale').value);
     </script>
     <br>
-    <label for="useHubble">Paint scale (higher values reduce the extent of borders drawn)</label>
+    <label for="paintScale">Paint scale (higher values reduce the extent of borders drawn)</label>
+
+    <br>
+    <br>
+
+    <span class="bold">Map Mode</span>
+
+    <br>
+
+    <input type="radio" name="mapMode" id="normalMapMode" checked>
+    <label for="normalMapMode">Normal</label>
+    <input type="radio" name="mapMode" id="popMapMode">
+    <label for="popMapMode">Population</label>
+    <input type="radio" name="mapMode" id="militaryMapMode">
+    <label for="militaryMapMode">Military Power</label>
+    <input type="radio" name="mapMode" id="economyMapMode">
+    <label for="economyMapMode">Economic Output</label>
+    <input type="radio" name="mapMode" id="technologyMapMode">
+    <label for="technologyMapMode">Technology Level</label>
+    <input type="radio" name="mapMode" id="popDensityMapMode">
+    <label for="popDensityMapMode">Population Density</label>
+
+    <br>
+    <br>
+
+    <input type="range" min="1" max="20" value="5" class="slider" id="popScale" name="popScale" oninput="updatePopScaleNumberDisplay()">
+    <span id="popScaleNumberDisplay" class="big"></span>
+    <script>
+        document.getElementById('popScaleNumberDisplay').innerHTML = ''+(document.getElementById('popScale').value);
+    </script>
+    <br>
+    <label for="popScale">1 Square = This many pops (Population Density map mode)</label>
 
     <br>
     <br>

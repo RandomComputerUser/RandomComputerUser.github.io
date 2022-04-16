@@ -11,8 +11,12 @@ input[type="text"] {
     color: #081828;
 }
 
-input[type="range"] {
-    width: 25rem;
+.paintScale {
+    width: 35rem;
+}
+
+.popScale {
+    width: 20rem;
 }
 
 button {
