@@ -116,6 +116,14 @@ HYPERLANE_COLOR = 'rgba(245,245,245,0.18)';
 STAR_COLOR = 'rgb(245,245,245)';
 POPULATED_COLOR = 'rgb(250,245,10)';
 
+function setPopulatedColor(mapMode) {
+    if (mapMode === 'popDensity') {
+        POPULATED_COLOR = 'rgb(210,150,5)';
+    } else {
+        POPULATED_COLOR = 'rgb(250,245,10)';
+    }
+}
+
 USE_FLAG_COLORS = false;
 DRAW_MAP_NAMES = true;
 ALT_NAME_STYLE = false;
@@ -2256,6 +2264,8 @@ function generateMap() {
     else if (document.getElementById('economyMapMode').checked) mapMode = 'economy';
     else if (document.getElementById('technologyMapMode').checked) mapMode = 'technology';
     else if (document.getElementById('popDensityMapMode').checked) mapMode = 'popDensity';
+
+    setPopulatedColor(mapMode);
 
     const canvas = document.getElementById('galaxyMap');
     const ctx = canvas.getContext('2d');
