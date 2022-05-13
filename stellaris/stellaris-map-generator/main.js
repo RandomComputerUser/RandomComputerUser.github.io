@@ -1,5 +1,7 @@
 // The code in here is of questionable quality
 
+DEBUG = false;
+
 BACKGROUND_IMAGE = new Image();
 BACKGROUND_IMAGE.src = document.getElementById('backgroundImage').src;
 
@@ -43,10 +45,87 @@ function jsf32(a, b, c, d) {
     }
 }
 
+COLORS = {
+    dark_brown:         {flag: [58, 38, 23],    map: [107, 68, 40],     ship: [255, 228, 136]},
+    brown:              {flag: [101, 66, 40],   map: [156, 91, 45],     ship: [255, 228, 136]},
+    beige:              {flag: [150, 126, 90],  map: [150, 126, 90],    ship: [255, 228, 136]},
+    khaki_brown:        {flag: [174, 121, 83],  map: [174, 121, 83],    ship: [255, 228, 136]},
+    ochre_brown:        {flag: [224, 197, 106], map: [224, 197, 106],   ship: [255, 228, 136]},
+    desert_yellow:      {flag: [237, 231, 116], map: [237, 231, 116],   ship: [255, 228, 136]},
+    dark_orange:        {flag: [167, 57, 0],    map: [167, 57, 0],      ship: [255, 133, 24]},
+    intense_orange:     {flag: [255, 86, 0],    map: [255, 86, 0],      ship: [255, 133, 24]},
+    orange:             {flag: [215, 100, 35],  map: [237, 118, 25],    ship: [255, 133, 24]},
+    light_orange:       {flag: [244, 139, 15],  map: [244, 139, 15],    ship: [245, 232, 2]},
+    yellow:             {flag: [204, 148, 41],  map: [204, 148, 41],    ship: [245, 232, 2]},
+    bright_yellow:      {flag: [224, 214, 46],  map: [224, 214, 46],    ship: [245, 232, 2]},
+    dark_red:           {flag: [103, 25, 39],   map: [103, 25, 39],     ship: [255, 57, 36]},
+    red:                {flag: [158, 22, 22],   map: [151, 14, 18],     ship: [255, 57, 36]},
+    red_orange:         {flag: [215, 74, 65],   map: [224, 64, 64],     ship: [255, 57, 36]},
+    intense_red:        {flag: [241, 37, 15],   map: [241, 37, 15],     ship: [255, 57, 36]},
+    cerise_red:         {flag: [245, 102, 102], map: [245, 102, 102],   ship: [255, 57, 36]},
+    pink_red:           {flag: [237, 131, 131], map: [237, 131, 131],   ship: [255, 57, 36]},
+    burgundy:           {flag: [89, 18, 39],    map: [89, 18, 39],      ship: [232, 40, 130]},
+    satin_burgundy:     {flag: [149, 20, 72],   map: [116, 31, 65],     ship: [232, 40, 130]},
+    intense_burgundy:   {flag: [179, 37, 94],   map: [149, 20, 72],     ship: [232, 40, 130]},
+    pink:               {flag: [130, 50, 105],  map: [151, 15, 100],    ship: [232, 40, 130]},
+    intense_pink:       {flag: [176, 49, 128],  map: [190, 40, 134],    ship: [232, 40, 130]},
+    light_pink:         {flag: [208, 49, 149],  map: [222, 64, 163],    ship: [232, 40, 130]},
+    shadow_purple:      {flag: [81, 15, 113],   map: [63, 9, 89],       ship: [199, 81, 252]},
+    dark_purple:        {flag: [98, 20, 135],   map: [81, 15, 113],     ship: [199, 81, 252]},
+    purple:             {flag: [100, 54, 158],  map: [109, 24, 150],    ship: [199, 81, 252]},
+    intense_purple:     {flag: [139, 39, 184],  map: [139, 39, 184],    ship: [199, 81, 252]},
+    cloud_purple:       {flag: [167, 58, 217],  map: [167, 58, 217],    ship: [199, 81, 252]},
+    bright_purple:      {flag: [194, 125, 227], map: [194, 125, 227],   ship: [199, 81, 252]},
+    shadow_blue:        {flag: [15, 17, 91],    map: [15, 17, 91],      ship: [102, 82, 255]},
+    indigo:             {flag: [47, 19, 127],   map: [36, 21, 156],     ship: [102, 82, 255]},
+    light_indigo:       {flag: [96, 82, 207],   map: [96, 82, 207],     ship: [102, 82, 255]},
+    wave_blue:          {flag: [139, 126, 242], map: [159, 151, 224],   ship: [102, 82, 255]},
+    faded_blue:         {flag: [183, 173, 255], map: [191, 187, 224],   ship: [102, 82, 255]},
+    pink_purple:        {flag: [221, 216, 254], map: [221, 216, 254],   ship: [102, 82, 255]},
+    dark_blue:          {flag: [51, 22, 132],   map: [45, 61, 116],     ship: [90, 202, 255]},
+    blue:               {flag: [46, 63, 152],   map: [46, 63, 153],     ship: [90, 202, 255]},
+    light_blue:         {flag: [71, 113, 177],  map: [71, 114, 178],    ship: [90, 202, 255]},
+    intense_blue:       {flag: [30, 159, 220],  map: [30, 159, 220],    ship: [90, 202, 255]},
+    sky_blue:           {flag: [88, 188, 235],  map: [88, 188, 235],    ship: [90, 202, 255]},
+    mist_blue:          {flag: [137, 221, 246], map: [137, 221, 246],   ship: [90, 202, 255]},
+    shadow_teal:        {flag: [9, 57, 57],     map: [9, 57, 57],       ship: [0, 255, 253]},
+    light_turquoise:    {flag: [23, 98, 98],    map: [23, 98, 98],      ship: [0, 255, 253]},
+    turquoise:          {flag: [61, 153, 147],  map: [61, 153, 147],    ship: [0, 255, 253]},
+    intense_turquoise:  {flag: [55, 178, 170],  map: [55, 178, 170],    ship: [0, 255, 253]},
+    ocean_turquoise:    {flag: [49, 208, 198],  map: [49, 208, 198],    ship: [0, 255, 253]},
+    ice_turquoise:      {flag: [137, 237, 236], map: [137, 237, 236],   ship: [0, 255, 253]},
+    shadow_green:       {flag: [32, 55, 41],    map: [32, 55, 41],      ship: [57, 255, 88]},
+    dark_green:         {flag: [28, 69, 28],    map: [27, 66, 26],      ship: [57, 255, 88]},
+    green:              {flag: [46, 102, 41],   map: [46, 102, 41],     ship: [57, 255, 88]},
+    dark_teal:          {flag: [51, 127, 91],   map: [51, 127, 91],     ship: [57, 255, 88]},
+    teal:               {flag: [76, 153, 84],   map: [76, 153, 84],     ship: [57, 255, 88]},
+    light_green:        {flag: [160, 222, 141], map: [160, 222, 141],   ship: [57, 255, 88]},
+    swamp_green:        {flag: [57, 74, 12],    map: [88, 107, 39],     ship: [201, 255, 60]},
+    moss_green:         {flag: [80, 99, 28],    map: [112, 142, 35],    ship: [201, 255, 60]},
+    sick_green:         {flag: [112, 142, 35],  map: [157, 175, 35],    ship: [201, 255, 60]},
+    toxic_green:        {flag: [157, 175, 35],  map: [168, 218, 39],    ship: [201, 255, 60]},
+    frog_green:         {flag: [168, 218, 39],  map: [209, 241, 126],   ship: [201, 255, 60]},
+    sun_green:          {flag: [230, 244, 147], map: [230, 244, 147],   ship: [201, 255, 60]}, 
+    shadow_steel:       {flag: [51, 60, 65],    map: [51, 60, 65],      ship: [196, 216, 222]},
+    dark_steel:         {flag: [76, 90, 98],    map: [76, 90, 98],      ship: [196, 216, 222]},
+    medium_steel:       {flag: [101, 119, 128], map: [101, 119, 128],   ship: [196, 216, 222]},
+    ship_steel:         {flag: [131, 150, 156], map: [131, 150, 156],   ship: [196, 216, 222]},
+    hard_steel:         {flag: [152, 168, 173], map: [152, 168, 173],   ship: [196, 216, 222]},
+    silver_steel:       {flag: [208, 225, 230], map: [208, 225, 230],   ship: [196, 216, 222]},
+    black:              {flag: [27, 27, 27],    map: [27, 27, 27],      ship: [243, 243, 243]},
+    dark_grey:          {flag: [62, 62, 62],    map: [62, 62, 62],      ship: [243, 243, 243]},
+    grey:               {flag: [128, 128, 128], map: [128, 128, 128],   ship: [243, 243, 243]},
+    light_grey:         {flag: [191, 191, 191], map: [191, 191, 191],   ship: [243, 243, 243]},
+    off_white:          {flag: [239, 239, 239], map: [239, 239, 239],   ship: [243, 243, 243]},
+    white:              {flag: [255, 255, 255], map: [255, 255, 255],   ship: [243, 243, 243]}
+}
+
 ENTRIES_KEY = '___entries';
 UNOWNED_ID = -1000000000;
 
 CANVAS_SCALE = 2;
+
+GREATER_DESATURATION = false;
 
 POPS_PER_SYMBOL = 5;
 POP_SYMBOL_FILL = 'rgb(5,250,5)';
@@ -470,8 +549,10 @@ class SaveState {
 
                         this.meta = parseDataToObject(content);
 
-                        // console.log(this.gamestate);
-                        // console.log(this.meta);
+                        if (DEBUG) {
+                            console.log(this.gamestate);
+                            console.log(this.meta);
+                        }
                         
                         document.getElementById('fileStatus').innerHTML = 'Save file loaded.'
 
@@ -513,7 +594,53 @@ function createEntries(obj) {
 
 }
 
-function getColorsAndCapitalSystems(gamestate, mapMode, starbaseCount, stars, federations) {
+function getColorsAndCapitalSystems(gamestate, mapMode, colorVariant, starbaseCount, stars, federations) {
+
+    function rgbToHsv(r, g, b, count, raw=false) {
+
+        let highest = Math.max(r, g, b);
+        
+        let s = 1 - Math.min(r, g, b) / Math.max(highest, 1);
+        let v = highest / 255.0;
+
+        let h = 0;
+        if (v === 0 || s === 0) {
+            h = 0;
+        } else {
+
+            r /= v;
+            g /= v;
+            b /= v;
+
+            r -= (1 - s) * (255 - r);
+            g -= (1 - s) * (255 - g);
+            b -= (1 - s) * (255 - b);
+
+            highest = Math.max(r, g, b);
+
+            if (highest === r) {
+                if (b > g) {
+                    h = 6/6 - b / r / 6;
+                } else {
+                    h = g / r / 6;
+                }
+            } else if (highest === g) {
+                if (r > b) {
+                    h = 2/6 - r / g / 6;
+                } else {
+                    h = 2/6 + b / g / 6;
+                }
+            } else {
+                if (g > r) {
+                    h = 4/6 - g / b / 6;
+                } else {
+                    h = 4/6 + r / b / 6;
+                }
+            }
+        }
+
+        return hsv(h, s, v, count, raw);
+    }
 
     function hsv(h, s, v, count, raw=false) {
 
@@ -524,6 +651,10 @@ function getColorsAndCapitalSystems(gamestate, mapMode, starbaseCount, stars, fe
         if (!raw) {
             v = Math.min(1.0, Math.max(0.2, 0.9 * v * (0.85 ** count) + 0.05));
             s = 0.65 * s;
+            if (GREATER_DESATURATION) {
+                s *= 0.75;
+                v *= 0.9;
+            }
         }
 
         let r = 0.0;
@@ -620,84 +751,10 @@ function getColorsAndCapitalSystems(gamestate, mapMode, starbaseCount, stars, fe
 
             let count = colorCount[color];
 
-            switch (color) {
-                case 'dark_brown':
-                    colors[id] = hsv(0.06, 0.5, 0.35, colorCount[color]);
-                    continue;
-                case 'brown':
-                    colors[id] = hsv(0.08, 0.5, 0.55, colorCount[color]);
-                    continue;
-                case 'beige':
-                    colors[id] = hsv(0.075, 0.4, 0.7, colorCount[color]);
-                    continue;
-                case 'yellow':
-                    colors[id] = hsv(0.10, 0.75, 0.8, colorCount[color]); // originally hsv(0.10, 0.75, 0.99)
-                    continue;
-                case 'light_orange':
-                    colors[id] = hsv(0.09, 0.8, 0.8, colorCount[color]);
-                    continue;
-                case 'orange':
-                    colors[id] = hsv(0.075, 0.8, 0.7, colorCount[color]);
-                    continue;
-                case 'red_orange':
-                    colors[id] = hsv(0.028, 0.75, 0.7, colorCount[color]);
-                    continue;
-                case 'red':
-                    colors[id] = hsv(0.99, 0.8, 0.7, colorCount[color]);
-                    continue;
-                case 'burgundy':
-                    colors[id] = hsv(0.93, 0.6, 0.42, colorCount[color]);
-                    continue;
-                case 'pink':
-                    colors[id] = hsv(0.95, 0.35, 0.6, colorCount[color]);
-                    continue;
-                case 'purple':
-                    colors[id] = hsv(0.8, 0.4, 0.5, colorCount[color]);
-                    continue;
-                case 'dark_purple':
-                    colors[id] = hsv(0.85, 0.6, 0.35, colorCount[color]);
-                    continue;
-                case 'indigo':
-                    colors[id] = hsv(0.71, 0.85, 0.5, colorCount[color]);
-                    continue;
-                case 'dark_blue':
-                    colors[id] = hsv(0.58, 0.7, 0.4, colorCount[color]);
-                    continue;
-                case 'blue':
-                    colors[id] = hsv(0.6, 0.5, 0.6, colorCount[color]);
-                    continue;
-                case 'light_blue':
-                    colors[id] = hsv(0.6, 0.4, 0.65, colorCount[color]); // originally hsv(0.6, 0.4, 0.8)
-                    continue;
-                case 'turquoise':
-                    colors[id] = hsv(0.5, 0.75, 0.5, colorCount[color]); // originally hsv(0.5, 0.7, 0.8)
-                    continue;
-                case 'dark_teal':
-                    colors[id] = hsv(0.48, 0.6, 0.42, colorCount[color]);
-                    continue;
-                case 'teal':
-                    colors[id] = hsv(0.43, 0.3, 0.5, colorCount[color]);
-                    continue;
-                case 'light_green':
-                    colors[id] = hsv(0.35, 0.4, 0.55, colorCount[color]);
-                    continue;
-                case 'green':
-                    colors[id] = hsv(0.32, 0.4, 0.55, colorCount[color]);
-                    continue;
-                case 'dark_green':
-                    colors[id] = hsv(0.33, 0.4, 0.3, colorCount[color]);
-                    continue;
-                case 'grey':
-                    colors[id] = hsv(0.58, 0.15, 0.5, colorCount[color]); // originally hsv(0.58, 0.15, 0.6)
-                    continue;
-                case 'dark_grey':
-                    colors[id] = hsv(0.6, 0.2, 0.3, colorCount[color]);
-                    continue;
-                case 'black':
-                    colors[id] = hsv(0.7, 0.1, 0.18, colorCount[color]);
-                    continue;
-                default:
-                    break;
+            if (COLORS.hasOwnProperty(color)) {
+                colors[id] = rgbToHsv(...(COLORS[color][colorVariant]), count, false);
+                colorCount[color]++;
+                continue;
             }
         } 
 
@@ -705,6 +762,17 @@ function getColorsAndCapitalSystems(gamestate, mapMode, starbaseCount, stars, fe
     }
 
     if (federations && gamestate.federation != null) {
+
+        for (let [id, country] of Object.entries(gamestate.country)) {
+
+            if (colors[id] == null) continue;
+            if (!Array.isArray(country.subjects)) continue;
+
+            for (let subjectId of country.subjects) {
+                colors[subjectId] = colors[id];
+            }
+
+        }
 
         for (let [id, federation] of Object.entries(gamestate.federation)) {
 
@@ -2247,6 +2315,7 @@ function generateMap() {
     // Get settings, canvas, save file data
 
     USE_FLAG_COLORS = document.getElementById('useFlagColors').checked;
+    GREATER_DESATURATION = document.getElementById('greaterDesaturation').checked;
     USE_FEDERATION_COLORS = document.getElementById('useFederationColors').checked;
     DRAW_MAP_NAMES = document.getElementById('drawMapNames').checked;
     ALT_NAME_STYLE = document.getElementById('altNameStyle').checked;
@@ -2264,6 +2333,10 @@ function generateMap() {
     else if (document.getElementById('economyMapMode').checked) mapMode = 'economy';
     else if (document.getElementById('technologyMapMode').checked) mapMode = 'technology';
     else if (document.getElementById('popDensityMapMode').checked) mapMode = 'popDensity';
+
+    let colorVariant = 'map';
+    if (document.getElementById('flagColorVariant').checked) colorVariant = 'flag';
+    else if (document.getElementById('shipColorVariant').checked) colorVariant = 'ship';
 
     setPopulatedColor(mapMode);
 
@@ -2374,7 +2447,7 @@ function generateMap() {
         }
     }
 
-    let [colors, colorCount] = getColorsAndCapitalSystems(gamestate, mapMode, starbaseCount, stars, USE_FEDERATION_COLORS);
+    let [colors, colorCount] = getColorsAndCapitalSystems(gamestate, mapMode, colorVariant, starbaseCount, stars, USE_FEDERATION_COLORS);
 
     // Generate map
 

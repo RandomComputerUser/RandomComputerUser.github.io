@@ -22,12 +22,18 @@
     <br>
 
     <input type="checkbox" id="useFlagColors" name="useFlagColors">
-    <label for="useFlagColors">Use in-game flag colors instead of in-game map colors</label>
+    <label for="useFlagColors">Use flag primary color instead of map border color</label>
+
+    <br>
+
+    
+    <input type="checkbox" id="greaterDesaturation" name="greaterDesaturation">
+    <label for="greaterDesaturation">Decrease saturation of colors even further</label>
 
     <br>
 
     <input type="checkbox" id="useFederationColors" name="useFederationColors">
-    <label for="useFederationColors">Use federation colors</label>
+    <label for="useFederationColors">Use overlord and federation colors</label>
     
     <br>
 
@@ -74,6 +80,20 @@
     </script>
     <br>
     <label for="paintScale">Paint scale (higher values reduce the extent of borders drawn)</label>
+
+    <br>
+    <br>
+
+    <span class="bold">Color Variants (all options decrease saturation below in-game colors)</span>
+
+    <br>
+
+    <input type="radio" name="colorVariant" id="mapColorVariant" checked>
+    <label for="mapColorVariant">Map Shades</label>
+    <input type="radio" name="colorVariant" id="flagColorVariant">
+    <label for="flagColorVariant">Flag Shades</label>
+    <input type="radio" name="colorVariant" id="shipColorVariant">
+    <label for="shipColorVariant">Ship Shades</label>
 
     <br>
     <br>
