@@ -84,7 +84,7 @@
     <br>
     <br>
 
-    <span class="bold">Color Variants (all options decrease saturation below in-game colors)</span>
+    <span class="bold">Color Variants (all options reduce saturation below that of in-game colors)</span>
 
     <br>
 
@@ -113,7 +113,7 @@
     <input type="radio" name="mapMode" id="technologyMapMode">
     <label for="technologyMapMode">Technology Level</label>
     <input type="radio" name="mapMode" id="popDensityMapMode">
-    <label for="popDensityMapMode">Population Density</label>
+    <label for="popDensityMapMode">Population Distribution</label>
 
     <br>
     <br>
@@ -124,7 +124,7 @@
         document.getElementById('popScaleNumberDisplay').innerHTML = ''+(document.getElementById('popScale').value);
     </script>
     <br>
-    <label for="popScale">1 Square = This many pops (Population Density map mode)</label>
+    <label for="popScale">1 Square = This many pops (Population Distribution map mode)</label>
 
     <br>
     <br>
@@ -137,6 +137,8 @@
     <br>
 
     <span class="warning">Warning: The maps generated do not include include the fog of war.</span>
+    <br>
+    <span class="warning">All randomly generated empire names using name formats (added in 3.4) will use the English localization of that format.</span>
     <br>
     <span class="bold">On Windows, use Firefox for better map name rendering.</span>
 

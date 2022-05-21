@@ -120,6 +120,226 @@ COLORS = {
     white:              {flag: [255, 255, 255], map: [255, 255, 255],   ship: [243, 243, 243]}
 }
 
+EMPIRE_NAME_FORMATS_ENGLISH = {
+    "format.imp_mil.1": [{type: "namelist_value", value: "imperial_mil"}, {type: "string", value: " of "}, {type: "variable_value", value: "This.Capital.System.GetName"}],
+    "format.imp_mil.2": [{type: "namelist_value", value: "imperial_mil"}, {type: "string", value: " of "}, {type: "variable_value", value: "This.Capital.GetName"}],
+    "format.imp_mil.3": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "imperial_mil"}],
+    "format.imp_mil.4": [{type: "namelist_value", value: "imperial_mil_desc"}, {type: "string", value: " "}, {type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "imperial_mil"}],
+    "format.imp_mil.5": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "imperial_mil_mid_desc"}, {type: "string", value: " "}, {type: "namelist_value", value: "imperial_mil"}],
+    "format.imp_spi.1": [{type: "namelist_value", value: "imperial_spi"}, {type: "string", value: " of "}, {type: "variable_value", value: "This.Capital.System.GetName"}],
+    "format.imp_spi.2": [{type: "namelist_value", value: "imperial_spi"}, {type: "string", value: " of "}, {type: "variable_value", value: "This.Capital.GetName"}],
+    "format.imp_spi.3": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "imperial_spi"}],
+    "format.imp_spi.4": [{type: "namelist_value", value: "imperial_spi_desc"}, {type: "string", value: " "}, {type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "imperial_spi"}],
+    "format.imp_spi.5": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "imperial_spi_mid_desc"}, {type: "string", value: " "}, {type: "namelist_value", value: "imperial_spi"}],
+    "format.imp_cult.1": [{type: "namelist_value", value: "imperial_imperial_cult"}, {type: "string", value: " of "}, {type: "variable_value", value: "This.Capital.System.GetName"}],
+    "format.imp_cult.2": [{type: "namelist_value", value: "imperial_imperial_cult"}, {type: "string", value: " of "}, {type: "variable_value", value: "This.Capital.GetName"}],
+    "format.imp_cult.3": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "imperial_imperial_cult"}],
+    "format.imp_cult.4": [{type: "namelist_value", value: "imperial_spi_desc"}, {type: "string", value: " "}, {type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "imperial_imperial_cult"}],
+    "format.imp_cult.5": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "imperial_spi_mid_desc"}, {type: "string", value: " "}, {type: "namelist_value", value: "imperial_imperial_cult"}],
+    "format.imp_mat.1": [{type: "namelist_value", value: "imperial_mat"}, {type: "string", value: " of "}, {type: "variable_value", value: "This.Capital.System.GetName"}],
+    "format.imp_mat.2": [{type: "namelist_value", value: "imperial_mat"}, {type: "string", value: " of "}, {type: "variable_value", value: "This.Capital.GetName"}],
+    "format.imp_mat.3": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "imperial_mat"}],
+    "format.imp_mat.4": [{type: "namelist_value", value: "imperial_mat_desc"}, {type: "string", value: " "}, {type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "imperial_mat"}],
+    "format.imp_mat.5": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "imperial_mat_mid_desc"}, {type: "string", value: " "}, {type: "namelist_value", value: "imperial_mat"}],
+    "format.imp_tech.1": [{type: "namelist_value", value: "imperial_tech"}, {type: "string", value: " of "}, {type: "variable_value", value: "This.Capital.System.GetName"}],
+    "format.imp_tech.2": [{type: "namelist_value", value: "imperial_tech"}, {type: "string", value: " of "}, {type: "variable_value", value: "This.Capital.GetName"}],
+    "format.imp_tech.3": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "imperial_tech"}],
+    "format.imp_tech.4": [{type: "namelist_value", value: "imperial_mat_desc"}, {type: "string", value: " "}, {type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "imperial_tech"}],
+    "format.imp_tech.5": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "imperial_mat_mid_desc"}, {type: "string", value: " "}, {type: "namelist_value", value: "imperial_tech"}],
+    "format.imp_pac.1": [{type: "namelist_value", value: "imperial_pac"}, {type: "string", value: " of "}, {type: "variable_value", value: "This.Capital.System.GetName"}],
+    "format.imp_pac.2": [{type: "namelist_value", value: "imperial_pac"}, {type: "string", value: " of "}, {type: "variable_value", value: "This.Capital.GetName"}],
+    "format.imp_pac.3": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "imperial_pac"}],
+    "format.imp_pac.4": [{type: "namelist_value", value: "imperial_pac_desc"}, {type: "string", value: " "}, {type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "imperial_pac"}],
+    "format.imp_pac.5": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "imperial_pac_mid_desc"}, {type: "string", value: " "}, {type: "namelist_value", value: "imperial_pac"}],
+    "format.imp_cel.1": [{type: "namelist_value", value: "imperial_celestial"}, {type: "string", value: " of "}, {type: "variable_value", value: "This.Capital.System.GetName"}],
+    "format.imp_cel.2": [{type: "namelist_value", value: "imperial_celestial"}, {type: "string", value: " of "}, {type: "variable_value", value: "This.Capital.GetName"}],
+    "format.imp_cel.3": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "imperial_celestial"}],
+    "format.imp_cel.4": [{type: "namelist_value", value: "imperial_pac_desc"}, {type: "string", value: " "}, {type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "imperial_celestial"}],
+    "format.imp_cel.5": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "imperial_pac_mid_desc"}, {type: "string", value: " "}, {type: "namelist_value", value: "imperial_celestial"}],
+    "format.imp_enl.1": [{type: "namelist_value", value: "imperial_enlightened"}, {type: "string", value: " of "}, {type: "variable_value", value: "This.Capital.System.GetName"}],
+    "format.imp_enl.2": [{type: "namelist_value", value: "imperial_enlightened"}, {type: "string", value: " of "}, {type: "variable_value", value: "This.Capital.GetName"}],
+    "format.imp_enl.3": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "imperial_enlightened"}],
+    "format.imp_gen.1": [{type: "namelist_value", value: "imperial_gen"}, {type: "string", value: " of "}, {type: "variable_value", value: "This.Capital.System.GetName"}],
+    "format.imp_gen.2": [{type: "namelist_value", value: "imperial_gen"}, {type: "string", value: " of "}, {type: "variable_value", value: "This.Capital.GetName"}],
+    "format.imp_gen.3": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "imperial_gen"}],
+    "format.imp_gen.4": [{type: "namelist_value", value: "imperial_gen_desc"}, {type: "string", value: " "}, {type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "imperial_gen"}],
+    "format.imp_gen.5": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "imperial_gen_mid_desc"}, {type: "string", value: " "}, {type: "namelist_value", value: "imperial_gen"}],
+    "format.dict_mil.1": [{type: "namelist_value", value: "dictatorial_mil"}, {type: "string", value: " of "}, {type: "variable_value", value: "This.Capital.System.GetName"}],
+    "format.dict_mil.2": [{type: "namelist_value", value: "dictatorial_mil"}, {type: "string", value: " of "}, {type: "variable_value", value: "This.Capital.GetName"}],
+    "format.dict_mil.3": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "dictatorial_mil"}],
+    "format.dict_mil.4": [{type: "namelist_value", value: "dictatorial_mil_desc"}, {type: "string", value: " "}, {type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "dictatorial_mil"}],
+    "format.dict_mil.5": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "dictatorial_mil_mid_desc"}, {type: "string", value: " "}, {type: "namelist_value", value: "dictatorial_mil"}],
+    "format.dict_spi.1": [{type: "namelist_value", value: "dictatorial_spi"}, {type: "string", value: " of "}, {type: "variable_value", value: "This.Capital.System.GetName"}],
+    "format.dict_spi.2": [{type: "namelist_value", value: "dictatorial_spi"}, {type: "string", value: " of "}, {type: "variable_value", value: "This.Capital.GetName"}],
+    "format.dict_spi.3": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "dictatorial_spi"}],
+    "format.dict_spi.4": [{type: "namelist_value", value: "dictatorial_spi_desc"}, {type: "string", value: " "}, {type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "dictatorial_spi"}],
+    "format.dict_spi.5": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "dictatorial_spi_mid_desc"}, {type: "string", value: " "}, {type: "namelist_value", value: "dictatorial_spi"}],
+    "format.dict_mat.1": [{type: "namelist_value", value: "dictatorial_mat"}, {type: "string", value: " of "}, {type: "variable_value", value: "This.Capital.System.GetName"}],
+    "format.dict_mat.2": [{type: "namelist_value", value: "dictatorial_mat"}, {type: "string", value: " of "}, {type: "variable_value", value: "This.Capital.GetName"}],
+    "format.dict_mat.3": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "dictatorial_mat"}],
+    "format.dict_mat.4": [{type: "namelist_value", value: "dictatorial_mat_desc"}, {type: "string", value: " "}, {type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "dictatorial_mat"}],
+    "format.dict_mat.5": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "dictatorial_mat_mid_desc"}, {type: "string", value: " "}, {type: "namelist_value", value: "dictatorial_mat"}],
+    "format.dict_tech.1": [{type: "namelist_value", value: "dictatorial_tech"}, {type: "string", value: " of "}, {type: "variable_value", value: "This.Capital.System.GetName"}],
+    "format.dict_tech.2": [{type: "namelist_value", value: "dictatorial_tech"}, {type: "string", value: " of "}, {type: "variable_value", value: "This.Capital.GetName"}],
+    "format.dict_tech.3": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "dictatorial_tech"}],
+    "format.dict_tech.4": [{type: "namelist_value", value: "dictatorial_mat_desc"}, {type: "string", value: " "}, {type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "dictatorial_tech"}],
+    "format.dict_tech.5": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "dictatorial_mat_mid_desc"}, {type: "string", value: " "}, {type: "namelist_value", value: "dictatorial_tech"}],
+    "format.dict_pac.1": [{type: "namelist_value", value: "dictatorial_pac"}, {type: "string", value: " of "}, {type: "variable_value", value: "This.Capital.System.GetName"}],
+    "format.dict_pac.2": [{type: "namelist_value", value: "dictatorial_pac"}, {type: "string", value: " of "}, {type: "variable_value", value: "This.Capital.GetName"}],
+    "format.dict_pac.3": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "dictatorial_pac"}],
+    "format.dict_pac.4": [{type: "namelist_value", value: "dictatorial_pac_desc"}, {type: "string", value: " "}, {type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "dictatorial_pac"}],
+    "format.dict_pac.5": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "dictatorial_pac_mid_desc"}, {type: "string", value: " "}, {type: "namelist_value", value: "dictatorial_pac"}],
+    "format.dict_gen.1": [{type: "namelist_value", value: "dictatorial_gen"}, {type: "string", value: " of "}, {type: "variable_value", value: "This.Capital.System.GetName"}],
+    "format.dict_gen.2": [{type: "namelist_value", value: "dictatorial_gen"}, {type: "string", value: " of "}, {type: "variable_value", value: "This.Capital.GetName"}],
+    "format.dict_gen.3": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "dictatorial_gen"}],
+    "format.dict_gen.4": [{type: "namelist_value", value: "dictatorial_gen_desc"}, {type: "string", value: " "}, {type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "dictatorial_gen"}],
+    "format.dict_gen.5": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "dictatorial_gen_mid_desc"}, {type: "string", value: " "}, {type: "namelist_value", value: "dictatorial_gen"}],
+    "format.olig_mil.1": [{type: "namelist_value", value: "oligarchic_mil"}, {type: "string", value: " of "}, {type: "variable_value", value: "This.Capital.System.GetName"}],
+    "format.olig_mil.2": [{type: "namelist_value", value: "oligarchic_mil"}, {type: "string", value: " of "}, {type: "variable_value", value: "This.Capital.GetName"}],
+    "format.olig_mil.3": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "oligarchic_mil"}],
+    "format.olig_mil.4": [{type: "namelist_value", value: "oligarchic_mil_desc"}, {type: "string", value: " "}, {type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "oligarchic_mil"}],
+    "format.olig_mil.5": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "oligarchic_mil_mid_desc"}, {type: "string", value: " "}, {type: "namelist_value", value: "oligarchic_mil"}],
+    "format.olig_serv.1": [{type: "namelist_value", value: "oligarchic_service"}, {type: "string", value: " of "}, {type: "variable_value", value: "This.Capital.System.GetName"}],
+    "format.olig_serv.2": [{type: "namelist_value", value: "oligarchic_service"}, {type: "string", value: " of "}, {type: "variable_value", value: "This.Capital.GetName"}],
+    "format.olig_serv.3": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "oligarchic_service"}],
+    "format.olig_spi.1": [{type: "namelist_value", value: "oligarchic_spi"}, {type: "string", value: " of "}, {type: "variable_value", value: "This.Capital.System.GetName"}],
+    "format.olig_spi.2": [{type: "namelist_value", value: "oligarchic_spi"}, {type: "string", value: " of "}, {type: "variable_value", value: "This.Capital.GetName"}],
+    "format.olig_spi.3": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "oligarchic_spi"}],
+    "format.olig_spi.4": [{type: "namelist_value", value: "oligarchic_spi_desc"}, {type: "string", value: " "}, {type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "oligarchic_spi"}],
+    "format.olig_spi.5": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "oligarchic_spi_mid_desc"}, {type: "string", value: " "}, {type: "namelist_value", value: "oligarchic_spi"}],
+    "format.olig_trib.1": [{type: "namelist_value", value: "oligarchic_holy_tribunal"}, {type: "string", value: " of "}, {type: "variable_value", value: "This.Capital.System.GetName"}],
+    "format.olig_trib.2": [{type: "namelist_value", value: "oligarchic_holy_tribunal"}, {type: "string", value: " of "}, {type: "variable_value", value: "This.Capital.GetName"}],
+    "format.olig_trib.3": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "oligarchic_holy_tribunal"}],
+    "format.olig_trib.4": [{type: "namelist_value", value: "oligarchic_spi_desc"}, {type: "string", value: " "}, {type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "oligarchic_holy_tribunal"}],
+    "format.olig_trib.5": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "oligarchic_spi_mid_desc"}, {type: "string", value: " "}, {type: "namelist_value", value: "oligarchic_holy_tribunal"}],
+    "format.olig_mat.1": [{type: "namelist_value", value: "oligarchic_mat"}, {type: "string", value: " of "}, {type: "variable_value", value: "This.Capital.System.GetName"}],
+    "format.olig_mat.2": [{type: "namelist_value", value: "oligarchic_mat"}, {type: "string", value: " of "}, {type: "variable_value", value: "This.Capital.GetName"}],
+    "format.olig_mat.3": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "oligarchic_mat"}],
+    "format.olig_mat.4": [{type: "namelist_value", value: "oligarchic_mat_desc"}, {type: "string", value: " "}, {type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "oligarchic_mat"}],
+    "format.olig_mat.5": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "oligarchic_mat_mid_desc"}, {type: "string", value: " "}, {type: "namelist_value", value: "oligarchic_mat"}],
+    "format.olig_tech.1": [{type: "namelist_value", value: "oligarchic_tech"}, {type: "string", value: " of "}, {type: "variable_value", value: "This.Capital.System.GetName"}],
+    "format.olig_tech.2": [{type: "namelist_value", value: "oligarchic_tech"}, {type: "string", value: " of "}, {type: "variable_value", value: "This.Capital.GetName"}],
+    "format.olig_tech.3": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "oligarchic_tech"}],
+    "format.olig_tech.4": [{type: "namelist_value", value: "oligarchic_mat_desc"}, {type: "string", value: " "}, {type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "oligarchic_tech"}],
+    "format.olig_tech.5": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "oligarchic_mat_mid_desc"}, {type: "string", value: " "}, {type: "namelist_value", value: "oligarchic_tech"}],
+    "format.olig_pac.1": [{type: "namelist_value", value: "oligarchic_pac"}, {type: "string", value: " of "}, {type: "variable_value", value: "This.Capital.System.GetName"}],
+    "format.olig_pac.2": [{type: "namelist_value", value: "oligarchic_pac"}, {type: "string", value: " of "}, {type: "variable_value", value: "This.Capital.GetName"}],
+    "format.olig_pac.3": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "oligarchic_pac"}],
+    "format.olig_pac.4": [{type: "namelist_value", value: "oligarchic_pac_desc"}, {type: "string", value: " "}, {type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "oligarchic_pac"}],
+    "format.olig_pac.5": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "oligarchic_pac_mid_desc"}, {type: "string", value: " "}, {type: "namelist_value", value: "oligarchic_pac"}],
+    "format.olig_gen.1": [{type: "namelist_value", value: "oligarchic_gen"}, {type: "string", value: " of "}, {type: "variable_value", value: "This.Capital.System.GetName"}],
+    "format.olig_gen.2": [{type: "namelist_value", value: "oligarchic_gen"}, {type: "string", value: " of "}, {type: "variable_value", value: "This.Capital.GetName"}],
+    "format.olig_gen.3": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "oligarchic_gen"}],
+    "format.olig_gen.4": [{type: "namelist_value", value: "oligarchic_gen_desc"}, {type: "string", value: " "}, {type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "oligarchic_gen"}],
+    "format.olig_gen.5": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "oligarchic_gen_mid_desc"}, {type: "string", value: " "}, {type: "namelist_value", value: "oligarchic_gen"}],
+    "format.dem_mil.1": [{type: "namelist_value", value: "democratic_mil"}, {type: "string", value: " of "}, {type: "variable_value", value: "This.Capital.System.GetName"}],
+    "format.dem_mil.2": [{type: "namelist_value", value: "democratic_mil"}, {type: "string", value: " of "}, {type: "variable_value", value: "This.Capital.GetName"}],
+    "format.dem_mil.3": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "democratic_mil"}],
+    "format.dem_mil.4": [{type: "namelist_value", value: "democratic_mil_desc"}, {type: "string", value: " "}, {type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "democratic_mil"}],
+    "format.dem_mil.5": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "democratic_mil_mid_desc"}, {type: "string", value: " "}, {type: "namelist_value", value: "democratic_mil"}],
+    "format.dem_war_cul.1": [{type: "namelist_value", value: "democratic_war_cul"}, {type: "string", value: " of "}, {type: "variable_value", value: "This.Capital.System.GetName"}],
+    "format.dem_war_cul.2": [{type: "namelist_value", value: "democratic_war_cul"}, {type: "string", value: " of "}, {type: "variable_value", value: "This.Capital.GetName"}],
+    "format.dem_war_cul.3": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "democratic_war_cul"}],
+    "format.dem_war_cul.4": [{type: "namelist_value", value: "democratic_mil_desc"}, {type: "string", value: " "}, {type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "democratic_war_cul"}],
+    "format.dem_serv.1": [{type: "namelist_value", value: "democratic_service"}, {type: "string", value: " of "}, {type: "variable_value", value: "This.Capital.System.GetName"}],
+    "format.dem_serv.2": [{type: "namelist_value", value: "democratic_service"}, {type: "string", value: " of "}, {type: "variable_value", value: "This.Capital.GetName"}],
+    "format.dem_serv.3": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "democratic_service"}],
+    "format.dem_spi.1": [{type: "namelist_value", value: "democratic_spi"}, {type: "string", value: " of "}, {type: "variable_value", value: "This.Capital.System.GetName"}],
+    "format.dem_spi.2": [{type: "namelist_value", value: "democratic_spi"}, {type: "string", value: " of "}, {type: "variable_value", value: "This.Capital.GetName"}],
+    "format.dem_spi.3": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "democratic_spi"}],
+    "format.dem_spi.4": [{type: "namelist_value", value: "democratic_spi_desc"}, {type: "string", value: " "}, {type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "democratic_spi"}],
+    "format.dem_spi.5": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "democratic_spi_mid_desc"}, {type: "string", value: " "}, {type: "namelist_value", value: "democratic_spi"}],
+    "format.dem_mat.1": [{type: "namelist_value", value: "democratic_mat"}, {type: "string", value: " of "}, {type: "variable_value", value: "This.Capital.System.GetName"}],
+    "format.dem_mat.2": [{type: "namelist_value", value: "democratic_mat"}, {type: "string", value: " of "}, {type: "variable_value", value: "This.Capital.GetName"}],
+    "format.dem_mat.3": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "democratic_mat"}],
+    "format.dem_mat.4": [{type: "namelist_value", value: "democratic_mat_desc"}, {type: "string", value: " "}, {type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "democratic_mat"}],
+    "format.dem_mat.5": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "democratic_mat_mid_desc"}, {type: "string", value: " "}, {type: "namelist_value", value: "democratic_mat"}],
+    "format.dem_tech.1": [{type: "namelist_value", value: "democratic_tech"}, {type: "string", value: " of "}, {type: "variable_value", value: "This.Capital.System.GetName"}],
+    "format.dem_tech.2": [{type: "namelist_value", value: "democratic_tech"}, {type: "string", value: " of "}, {type: "variable_value", value: "This.Capital.GetName"}],
+    "format.dem_tech.3": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "democratic_tech"}],
+    "format.dem_tech.4": [{type: "namelist_value", value: "democratic_mat_desc"}, {type: "string", value: " "}, {type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "democratic_tech"}],
+    "format.dem_tech.5": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "democratic_mat_mid_desc"}, {type: "string", value: " "}, {type: "namelist_value", value: "democratic_tech"}],
+    "format.dem_pac.1": [{type: "namelist_value", value: "democratic_pac"}, {type: "string", value: " of "}, {type: "variable_value", value: "This.Capital.System.GetName"}],
+    "format.dem_pac.2": [{type: "namelist_value", value: "democratic_pac"}, {type: "string", value: " of "}, {type: "variable_value", value: "This.Capital.GetName"}],
+    "format.dem_pac.3": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "democratic_pac"}],
+    "format.dem_pac.4": [{type: "namelist_value", value: "democratic_pac_desc"}, {type: "string", value: " "}, {type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "democratic_pac"}],
+    "format.dem_pac.5": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "democratic_pac_mid_desc"}, {type: "string", value: " "}, {type: "namelist_value", value: "democratic_pac"}],
+    "format.dem_gen.1": [{type: "namelist_value", value: "democratic_gen"}, {type: "string", value: " of "}, {type: "variable_value", value: "This.Capital.System.GetName"}],
+    "format.dem_gen.2": [{type: "namelist_value", value: "democratic_gen"}, {type: "string", value: " of "}, {type: "variable_value", value: "This.Capital.GetName"}],
+    "format.dem_gen.3": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "democratic_gen"}],
+    "format.dem_gen.4": [{type: "namelist_value", value: "democratic_gen_desc"}, {type: "string", value: " "}, {type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "democratic_gen"}],
+    "format.dem_gen.5": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "democratic_gen_mid_desc"}, {type: "string", value: " "}, {type: "namelist_value", value: "democratic_gen"}],
+    "format.gen_imp.1": [{type: "namelist_value", value: "generic_aut_desc"}, {type: "string", value: " "}, {type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "generic_states"}],
+    "format.gen_imp.2": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "generic_aut_desc"}, {type: "string", value: " "}, {type: "namelist_value", value: "generic_states"}],
+    "format.gen_olig.1": [{type: "namelist_value", value: "generic_oli_desc"}, {type: "string", value: " "}, {type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "generic_states"}],
+    "format.gen_olig.2": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "generic_oli_desc"}, {type: "string", value: " "}, {type: "namelist_value", value: "generic_states"}],
+    "format.gen_dem.1": [{type: "namelist_value", value: "generic_dem_desc"}, {type: "string", value: " "}, {type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "generic_states"}],
+    "format.gen_dem.2": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "generic_dem_desc"}, {type: "string", value: " "}, {type: "namelist_value", value: "generic_states"}],
+    "format.hive_mind.1": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "hive_mind"}],
+    "format.devouring_swarm.1": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "devouring_swarm"}],
+    "format.olig_corp.1": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "oligarchic_corp"}],
+    "format.olig_megachurch.1": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "oligarchic_megachurch"}],
+    "format.trade_league.1": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "trade_league"}],
+    "format.bandit_kingdom.1": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "bandit_kingdom"}],
+    "format.purifier.1": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "purifiers"}],
+    "format.primitive.1": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "primitive_names"}],
+    "format.marauder.1": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "marauder_names"}],
+    "format.awakened_marauder.1": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "awakened_marauder_names"}],
+    "format.pirate.1": [{type: "namelist_value", value: "pirate_names"}],
+    "format.fallen.1": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "fallen_empire_names_1"}],
+    "format.fallen.2": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "fallen_empire_names_2"}],
+    "format.fallen.3": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "fallen_empire_names_3"}],
+    "format.fallen.4": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "fallen_empire_names_4"}],
+    "format.fallen.machine": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "fallen_empire_names_machine"}],
+    "format.awakened.1": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "awakened_fallen_empire_names_1"}],
+    "format.awakened.2": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "awakened_fallen_empire_names_2"}],
+    "format.awakened.3": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "awakened_fallen_empire_names_3"}],
+    "format.awakened.4": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "awakened_fallen_empire_names_4"}],
+    "format.awakened.machine.1": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "awakened_fallen_empire_names_machine_1"}],
+    "format.awakened.machine.2": [{type: "namelist_value", value: "awakened_fallen_empire_names_machine_2"}],
+    "format.rad_cult.1": [{type: "namelist_value", value: "radical_cult_names"}],
+    "format.ai.1": [{type: "namelist_value", value: "ai_names"}],
+    "format.trader.1": [{type: "namelist_value", value: "trader_names"}],
+    "format.curator.1": [{type: "namelist_value", value: "curator_names"}],
+    "format.artist.1": [{type: "namelist_value", value: "artist_names"}],
+    "format.machine.1": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "machine_empire_names_1"}],
+    "format.machine.2": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "machine_empire_names_2"}],
+    "format.machine.3": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "machine_empire_names_3"}],
+    "format.machine.4": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "machine_empire_names_4"}],
+    "format.machine.5": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "machine_empire_names_5"}],
+    "format.machine.6": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "machine_empire_names_6"}],
+    "format.diadochi.1": [{type: "namelist_value", value: "diadochi_names_1_1"}, {type: "string", value: " "}, {type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "diadochi_names_1_2"}],
+    "format.diadochi.2": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "diadochi_names_2_1"}],
+    "format.diadochi.3": [{type: "namelist_value", value: "diadochi_names_3_1"}, {type: "string", value: " "}, {type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "diadochi_names_3_2"}],
+    "format.diadochi.4": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "diadochi_names_4_1"}, {type: "string", value: " "}, {type: "namelist_value", value: "diadochi_names_4_2"}],
+    "format.new_khanate": [{type: "namelist_value", value: "new_khanate_names_1_1"}, {type: "string", value: " "}, {type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "new_khanate_names_1_2"}],
+    "format.free_khanate": [{type: "namelist_value", value: "free_khanate_names_1_1"}, {type: "string", value: " "}, {type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "free_khanate_names_1_2"}],
+    "format.drone_pirate.1": [{type: "namelist_value", value: "drone_pirate_names"}],
+    "format.machine_pirate.1": [{type: "namelist_value", value: "machine_pirate_names"}],
+    "format.communal_parity.1": [{type: "namelist_value", value: "communal_parity"}, {type: "string", value: " of "}, {type: "variable_value", value: "This.Capital.GetName"}],
+    "format.communal_parity.2": [{type: "namelist_value", value: "communal_parity"}, {type: "string", value: " of "}, {type: "variable_value", value: "This.Capital.System.GetName"}],
+    "format.communal_parity.3": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "communal_parity"}],
+    "format.monopolistic_syndicate.1": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "monopolistic_syndicate"}],
+    "format.subversive_cult.1": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "subversive_cult_1"}],
+    "format.subversive_cult.2": [{type: "namelist_value", value: "subversive_cult_2"}, {type: "string", value: " of "}, {type: "variable_value", value: "This.Capital.GetName"}],
+    "format.necrophage.1": [{type: "namelist_value", value: "necrophagers"}, {type: "string", value: " of "}, {type: "variable_value", value: "This.Capital.System.GetName"}],
+    "format.necrophage.2": [{type: "namelist_value", value: "necrophagers"}, {type: "string", value: " of "}, {type: "variable_value", value: "This.Capital.GetName"}],
+    "format.necrophage.3": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "necrophagers"}],
+    "format.necrophage.4": [{type: "namelist_value", value: "necrophagers_start"}, {type: "string", value: " "}, {type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "necrophagers"}],
+    "format.imp_dom.1": [{type: "namelist_value", value: "imperial_domain_names"}],
+    "format.imp_dom.2": [{type: "namelist_value", value: "imperial_domain_names_2"}],
+    "format.imp_dom.3": [{type: "namelist_value", value: "imperial_domain_names_3"}],
+    "format.imp_dom.4": [{type: "namelist_value", value: "imperial_domain_names_4"}],
+    "format.necrophage_hive_mind.1": [{type: "namelist_value", value: "necrophagers_start"}, {type: "string", value: " "}, {type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "hive_mind"}],
+    "format.necrophage_devouring_swarm.1": [{type: "namelist_value", value: "necrophagers_start"}, {type: "string", value: " "}, {type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "devouring_swarm"}],
+    "format.mercenary.1": [{type: "namelist_value", value: "mercenary_names"}, {type: "string", value: " "}, {type: "namelist_value", value: "mercenary_groups"}],
+    "format.mercenary.2": [{type: "namelist_value", value: "mercenary_names"}, {type: "string", value: " "}, {type: "namelist_value", value: "mercenary_companies"}],
+    "format.mercenary.3": [{type: "variable_value", value: "This.GetSpeciesName"}, {type: "string", value: " "}, {type: "namelist_value", value: "mercenary_groups"}],
+    "format.salvager.1": [{type: "namelist_value", value: "salvager_groups_prefix"}, {type: "string", value: " "}, {type: "namelist_value", value: "salvager_names"}],
+    "format.shroudwalker.1": [{type: "namelist_value", value: "shroudwalker_groups"}, {type: "string", value: " "}, {type: "namelist_value", value: "shroudwalker_suffixes"}],
+    "format.shroudwalker.2": [{type: "namelist_value", value: "shroudwalker_names"}]
+}
+
 ENTRIES_KEY = '___entries';
 UNOWNED_ID = -1000000000;
 
@@ -544,6 +764,7 @@ class SaveState {
                 this.saveFile.file("gamestate").async("string").then((content) => {
 
                     this.gamestate = parseDataToObject(content);
+                    cepheus_getStarbaseOwners(this.gamestate);
 
                     this.saveFile.file("meta").async("string").then((content) => {
 
@@ -591,6 +812,56 @@ function getSave(e) {
 function createEntries(obj) {
 
     obj[ENTRIES_KEY] = Object.entries(obj);
+
+}
+
+// Modifies gamestate object
+function cepheus_getStarbaseOwners(gamestate) {
+
+    if (gamestate.country == null) return;
+    if (gamestate.fleet == null) return;
+    if (gamestate.starbase_mgr == null) return;
+    if (gamestate.starbase_mgr.starbases == null) return;
+
+    let stations = new Map();
+
+    for (let [id, starbase] of Object.entries(gamestate.starbase_mgr.starbases)) {
+        if (starbase.station == null) continue;
+        stations.set(starbase.station, id);
+    }
+
+    for (let [countryId, country] of Object.entries(gamestate.country)) {
+
+        if (country.fleets_manager == null) continue;
+        if (country.fleets_manager.owned_fleets == null) continue;
+
+        for (let fleet of country.fleets_manager.owned_fleets) {
+            if (fleet.fleet == null) continue;
+            fleet = gamestate.fleet[fleet.fleet];
+            if (fleet == null) continue;
+            if (fleet.name == null) continue;
+            let name = fleet.name;
+            if (typeof name !== 'string') {
+                if (typeof name.key === 'string') {
+                    name = name.key;
+                } else {
+                    continue;
+                }
+            }
+
+            if (!Array.isArray(fleet.ships)) continue;
+            if (fleet.ships.length <= 0) continue;
+
+            if (name === '"Starbase"') {
+                let starbaseId = +(stations.get(fleet.ships[0]));
+                if (starbaseId != null) {
+                    if (gamestate.starbase_mgr.starbases[starbaseId] != null) {
+                        gamestate.starbase_mgr.starbases[starbaseId].owner = +countryId;
+                    }
+                }
+            }
+        }
+    }
 
 }
 
@@ -725,7 +996,7 @@ function getColorsAndCapitalSystems(gamestate, mapMode, colorVariant, starbaseCo
 
         }
 
-        let countryData = getCountryData(country, mapMode);
+        let countryData = getCountryData(country, id, mapMode);
         if (countryData.level != null) {
             colors[id] = hsv(0.65, 0.7 - 0.38 * Math.max(0, 0.65 - countryData.level), 1.0 - 0.8 / 0.35 * Math.max(0, countryData.level - 0.65), 0, true);
             continue;
@@ -1106,7 +1377,7 @@ function getBlocksAndMapNames(ctx, gamestate, mapMode, values, createMapNames, s
             if (gamestate.country[owner] == null) continue;
             if (gamestate.country[owner].name == null) continue;
     
-            let name = ''+(getCountryData(gamestate.country[owner], mapMode).data);
+            let name = ''+(getCountryData(gamestate.country[owner], owner, mapMode).data);
     
             if (name.length < 1) continue;
     
@@ -2254,7 +2525,7 @@ function drawMapMiddle(ctx, gamestate, innerRadius) {
     
 }
 
-function getCountryData(country, mapMode) {
+function getCountryData(country, countryId, mapMode) {
 
     function logScale(value, min, max) {
 
@@ -2275,7 +2546,44 @@ function getCountryData(country, mapMode) {
     let economy = +(country.economy_power || 0);
     let technology = +(country.tech_power || 0);
 
-    let countryName = ''+(country.name || 'Unknown');
+    let countryName = ''+(() => {
+
+        if (country.hasOwnProperty('name')) {
+            if (typeof country.name === 'string') return country.name;
+            let formatKey = country.name.key.replaceAll('"', '');
+            if (EMPIRE_NAME_FORMATS_ENGLISH.hasOwnProperty(formatKey)) {
+                let variables = new Map();
+                for (let variable of country.name.variables) {
+                    variables.set(variable.key, variable.value.key);
+                }
+
+                let format = EMPIRE_NAME_FORMATS_ENGLISH[formatKey];
+
+                let name = '';
+
+                for (let part of format) {
+                    if (part.type === 'string') {
+                        name += part.value;
+                        continue;
+                    } 
+
+                    let value = variables.get(`"${part.value}"`);
+                    if (value == null) {
+                        name += '???';
+                    } else {
+                        name += value;
+                    }
+
+                }
+
+                return name;
+            }
+            return country.name.key;
+        }
+
+        return `Unnamed Empire ${countryId}`;
+
+    })();
     countryName = countryName.replaceAll('"', '');
     if (ALT_NAME_STYLE) countryName = (countryName.toLocaleUpperCase()).split('').join(' ');
 
@@ -2406,16 +2714,21 @@ function generateMap() {
             }
         }
 
-        if (star.starbase != null) {
-            if (gamestate.starbase_mgr.starbases[star.starbase] == null) continue;
-            if (gamestate.starbase_mgr.starbases[star.starbase].owner == null) continue;
+        let starbase = star.starbase;
+        if (starbase == null && Array.isArray(star.starbases) && star.starbases.length > 0) {
+            starbase = star.starbases[0];
+        }
 
-            let owner = gamestate.starbase_mgr.starbases[star.starbase].owner
+        if (starbase != null) {
+            if (gamestate.starbase_mgr.starbases[starbase] == null) continue;
+            if (gamestate.starbase_mgr.starbases[starbase].owner == null) continue;
+
+            let owner = gamestate.starbase_mgr.starbases[starbase].owner;
             stars[id].owner = owner;
             if (starbaseCount[owner] == null) starbaseCount[owner] = 0;
             starbaseCount[owner]++;
 
-            stars[id].upgraded = (gamestate.starbase_mgr.starbases[star.starbase].level != '"starbase_level_outpost"');
+            stars[id].upgraded = (gamestate.starbase_mgr.starbases[starbase].level != '"starbase_level_outpost"');
         }
 
         if (star.bypasses != null && gamestate.bypasses != null) {
