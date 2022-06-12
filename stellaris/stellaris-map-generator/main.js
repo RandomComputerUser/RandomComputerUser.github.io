@@ -118,7 +118,7 @@ COLORS = {
     light_grey:         {flag: [191, 191, 191], map: [191, 191, 191],   ship: [243, 243, 243]},
     off_white:          {flag: [239, 239, 239], map: [239, 239, 239],   ship: [243, 243, 243]},
     white:              {flag: [255, 255, 255], map: [255, 255, 255],   ship: [243, 243, 243]}
-}
+};
 
 EMPIRE_NAME_FORMATS_ENGLISH = {
     "format.imp_mil.1": [{type: "namelist_value", value: "imperial_mil"}, {type: "string", value: " of "}, {type: "variable_value", value: "This.Capital.System.GetName"}],
@@ -338,7 +338,39 @@ EMPIRE_NAME_FORMATS_ENGLISH = {
     "format.salvager.1": [{type: "namelist_value", value: "salvager_groups_prefix"}, {type: "string", value: " "}, {type: "namelist_value", value: "salvager_names"}],
     "format.shroudwalker.1": [{type: "namelist_value", value: "shroudwalker_groups"}, {type: "string", value: " "}, {type: "namelist_value", value: "shroudwalker_suffixes"}],
     "format.shroudwalker.2": [{type: "namelist_value", value: "shroudwalker_names"}]
-}
+};
+
+PRESCRIPTED_EMPIRE_NAMES_ENGLISH = {
+    EMPIRE_DESIGN_humans1: "United Nations of Earth",
+    EMPIRE_DESIGN_humans2: "Commonwealth of Man",
+    EMPIRE_DESIGN_humans1_1: "United Nations of Earth",
+    EMPIRE_DESIGN_humans2_1: "Commonwealth of Man",
+    EMPIRE_DESIGN_tzynn: "Tzynn Empire",
+    EMPIRE_DESIGN_yondar: "Kingdom of Yondarim",
+    EMPIRE_DESIGN_ixidar: "Ix'Idar Star Collective",
+    EMPIRE_DESIGN_chinorr: "Chinorr Combine",
+    EMPIRE_DESIGN_jehetma: "Jehetma Dominion",
+    EMPIRE_DESIGN_scyldari: "Scyldari Confederacy",
+    EMPIRE_DESIGN_blorg: "Blorg Commonality",
+    EMPIRE_DESIGN_kel_azaan: "Kel-Azaan Republic",
+    EMPIRE_DESIGN_iferyx: "Iferyx Amalgamated Fleets",
+    EMPIRE_DESIGN_paridni: "Paridni Mercantile Republic",
+    EMPIRE_DESIGN_ai_race: "AI",
+    EMPIRE_DESIGN_xanid: "Xanid Suzerainty",
+    EMPIRE_DESIGN_custodianship: "Earth Custodianship",
+    EMPIRE_DESIGN_tebrid: "Tebrid Homolog",
+    EMPIRE_DESIGN_xt489: "XT-489 Eliminator",
+    EMPIRE_DESIGN_lokken: "Lokken Mechanists",
+    EMPIRE_DESIGN_maweer: "Maweer Caretakers",
+    EMPIRE_DESIGN_VOOR: "Voor Technocracy",
+    EMPIRE_DESIGN_kilik: "Kilik Cooperative",
+    EMPIRE_DESIGN_orbis: "Orbis Customer Synergies",
+    EMPIRE_DESIGN_glebsig: "Glebsig Foundation",
+    EMPIRE_DESIGN_hazbuzan: "Hazbuzan Syndicate",
+    EMPIRE_DESIGN_khennet: "Keepers of Ave'brenn",
+    EMPIRE_DESIGN_pasharti: "Pasharti Absorbers",
+    EMPIRE_DESIGN_sathyrel: "Sathyrelian Bliss"
+};
 
 ENTRIES_KEY = '___entries';
 UNOWNED_ID = -1000000000;
@@ -397,6 +429,7 @@ CAPITAL_INNER_RADIUS = CANVAS_SCALE * 7;
 CAPITAL_STAR_RADIUS = CANVAS_SCALE * 7;
 
 HYPERLANE_WIDTH = CANVAS_SCALE * 3;
+HYPERLANE_HYPER_RELAY_WIDTH = CANVAS_SCALE * 5;
 
 BORDERS = [
     {color: 'rgba(225,225,225,0.4)', width: CANVAS_SCALE * 10, light: false, regular: true},
@@ -412,12 +445,13 @@ SUBSTITUTE_BACKGROUND = 'rgb(2,2,2)'; // If no Hubble
 BACKGROUND_COLOR = 'rgba(5,5,5,0.7)';
 BACKGROUND_COLOR_OPAQUE = 'rgb(5,5,5)';
 HYPERLANE_COLOR = 'rgba(245,245,245,0.18)';
+HYPERLANE_HYPER_RELAY_COLOR = 'rgba(245,245,245,0.36)';
 STAR_COLOR = 'rgb(245,245,245)';
 POPULATED_COLOR = 'rgb(250,245,10)';
 
 function setPopulatedColor(mapMode) {
     if (mapMode === 'popDensity') {
-        POPULATED_COLOR = 'rgb(210,150,5)';
+        POPULATED_COLOR = 'rgb(10,10,250)';
     } else {
         POPULATED_COLOR = 'rgb(250,245,10)';
     }
@@ -797,13 +831,20 @@ function getSave(e) {
 
     try {
 
-        document.getElementById('fileStatus').innerHTML = 'Loading save file...'
+        if (e.target.files == null || e.target.files[0] == null) {
+            throw new Error("No file was given");
+        }
+
+        const display = document.getElementById('fileInputDisplay');
+        display.innerHTML = '';
+        display.appendChild(document.createTextNode(e.target.files[0].name));
+        document.getElementById('fileStatus').innerHTML = 'Loading save file...';
         saveGame = new SaveState(e.target.files[0]);
 
     } catch (e) {
         console.log(e);
         alert(e.message);
-        document.getElementById('fileStatus').innerHTML = 'Save file failed to load.'
+        document.getElementById('fileStatus').innerHTML = 'Save file failed to load.';
         return;
     }
 
@@ -852,7 +893,7 @@ function cepheus_getStarbaseOwners(gamestate) {
             if (!Array.isArray(fleet.ships)) continue;
             if (fleet.ships.length <= 0) continue;
 
-            if (name === '"Starbase"') {
+            if (name === '"Starbase"' || name === '"shipclass_starbase_name"') {
                 let starbaseId = +(stations.get(fleet.ships[0]));
                 if (starbaseId != null) {
                     if (gamestate.starbase_mgr.starbases[starbaseId] != null) {
@@ -1368,7 +1409,7 @@ function getBlocksAndMapNames(ctx, gamestate, mapMode, values, createMapNames, s
 
     if (createMapNames) {
     
-        ctx.font = `${(ALT_NAME_STYLE) ? 'bold' : '500'} 30px ${(ALT_NAME_STYLE) ? MAP_FONT_ALT : MAP_FONT}`;
+        ctx.font = `${(ALT_NAME_STYLE) ? '600' : '500'} 30px ${(ALT_NAME_STYLE) ? MAP_FONT_ALT : MAP_FONT}`;
     
         for (let block of Object.keys(blockMaximalRectangle)) {
     
@@ -2249,6 +2290,9 @@ function drawGeography(ctx, colors, stars, hyperlanes) {
     ctx.beginPath();
 
     for (let [key, hyperlane] of Object.entries(hyperlanes)) {
+
+        if (stars[hyperlane.from].hyperRelay && stars[hyperlane.to].hyperRelay) continue;
+
         let x1 = stars[hyperlane.from].x;
         let y1 = stars[hyperlane.from].y;
         let x2 = stars[hyperlane.to].x;
@@ -2271,10 +2315,45 @@ function drawGeography(ctx, colors, stars, hyperlanes) {
         } else {
             ctx.lineTo(x2 - dx * Math.min(STAR_PADDING, length / 2), y2 - dy * Math.min(STAR_PADDING, length / 2));   
         }
+
     }
     
     ctx.lineCap = 'butt';
     ctx.stroke();
+
+    ctx.beginPath();
+    ctx.lineWidth = HYPERLANE_HYPER_RELAY_WIDTH;
+    ctx.strokeStyle = HYPERLANE_HYPER_RELAY_COLOR;
+    for (let [key, hyperlane] of Object.entries(hyperlanes)) {
+
+        if (!stars[hyperlane.from].hyperRelay || !stars[hyperlane.to].hyperRelay) continue;
+
+        let x1 = stars[hyperlane.from].x;
+        let y1 = stars[hyperlane.from].y;
+        let x2 = stars[hyperlane.to].x;
+        let y2 = stars[hyperlane.to].y;
+
+        let length = Math.hypot(x2 - x1, y2 - y1);
+        if (length <= 0) continue;
+
+        dx = (x2 - x1) / length;
+        dy = (y2 - y1) / length;
+
+        if (stars[hyperlane.from].upgraded) { 
+            ctx.moveTo(x1, y1);
+        } else {
+            ctx.moveTo(x1 + dx * Math.min(STAR_PADDING, length / 2), y1 + dy * Math.min(STAR_PADDING, length / 2));   
+        }
+
+        if (stars[hyperlane.to].upgraded) { 
+            ctx.lineTo(x2, y2);
+        } else {
+            ctx.lineTo(x2 - dx * Math.min(STAR_PADDING, length / 2), y2 - dy * Math.min(STAR_PADDING, length / 2));   
+        }
+        
+    }
+    ctx.stroke();
+
     ctx.lineCap = 'round';
 
     for (let [id, star] of Object.entries(stars)) {
@@ -2576,12 +2655,20 @@ function getCountryData(country, countryId, mapMode) {
 
                 }
 
+                name = name.replaceAll('SPEC_', '');
+                name = name.replaceAll('_planet', '');
+                name = name.replaceAll('NAME_', '');
+                name = name.replaceAll('_', ' ');
+
                 return name;
+            }
+            if (PRESCRIPTED_EMPIRE_NAMES_ENGLISH.hasOwnProperty(formatKey)) {
+                return PRESCRIPTED_EMPIRE_NAMES_ENGLISH[formatKey];
             }
             return country.name.key;
         }
 
-        return `Unnamed Empire ${countryId}`;
+        return `Unidentified Empire #${countryId}`;
 
     })();
     countryName = countryName.replaceAll('"', '');
@@ -2691,6 +2778,7 @@ function generateMap() {
             capital: false,
             population: 0,
             gateway: false,
+            hyperRelay: false,
             id: id
         };
 
@@ -2740,6 +2828,18 @@ function generateMap() {
             }
         }
 
+    }
+
+    if (gamestate.megastructures != null)
+    for (let [id, megastructure] of Object.entries(gamestate.megastructures)) {
+        if (megastructure.coordinate == null || !Number.isFinite(megastructure.coordinate.origin)) continue;
+        if (stars[megastructure.coordinate.origin] == null) continue;
+
+        if (megastructure.type == '"gateway"' || megastructure.type == '"gateway_restored"') {
+            stars[megastructure.coordinate.origin].gateway = true;
+        } else if (megastructure.type == '"hyper_relay"' || megastructure.type == '"hyper_relay_restored"') {
+            stars[megastructure.coordinate.origin].hyperRelay = true;
+        }
     }
 
     if (gamestate.planets != null && gamestate.planets.planet != null) {
@@ -2823,8 +2923,8 @@ function generateMap() {
     canvas.width = MAP_WIDTH;
     canvas.height = MAP_HEIGHT;
 
-    canvas.style.width = '1100px';
-    canvas.style.height = '1100px';
+    // canvas.style.width = 'min(200vw, 1024px)';
+    // canvas.style.height = 'min(200vw, 1024px)';
 
     ctx.filter = 'none';
 

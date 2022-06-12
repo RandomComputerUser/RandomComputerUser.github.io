@@ -8,153 +8,144 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@400;500&family=Barlow:wght@700&display=swap" rel="stylesheet"><link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@400;500&family=Barlow:wght@600&display=swap" rel="stylesheet"><link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <input type="file" id="saveFileInput" onchange="getSave(event)" />
+    <h1>Stellaris Map Generator</h1>
 
-    <br>
+    <div id="fileInputDiv">
+        <input type="file" id="saveFileInput" class="hidden" oninput="getSave(event)" />
+        <button onclick="document.getElementById('saveFileInput').click()">Choose SAV file</button>
+        <label for="saveFileInput" id="fileInputDisplay">Please select a save file.</label>
+        <br>
+        <span id="fileStatus">No save file selected.</span>
+    </div>
 
-    <span id="fileStatus">No save file selected.</span>
+    <div id="checkboxOptionsDiv">
+        <input type="checkbox" id="useFlagColors" name="useFlagColors">
+        <label for="useFlagColors">Use flag primary color instead of map border color</label>
 
-    <br>
-    <br>
+        <br>
+        
+        <input type="checkbox" id="greaterDesaturation" name="greaterDesaturation">
+        <label for="greaterDesaturation">Decrease saturation of colors even further</label>
 
-    <input type="checkbox" id="useFlagColors" name="useFlagColors">
-    <label for="useFlagColors">Use flag primary color instead of map border color</label>
+        <br>
 
-    <br>
+        <input type="checkbox" id="useFederationColors" name="useFederationColors">
+        <label for="useFederationColors">Use overlord and federation colors</label>
+        
+        <br>
+
+        <input type="checkbox" id="drawMapNames" name="drawMapNames" checked>
+        <label for="drawMapNames">Draw country names on map</label>
+
+        <br>
+
+        <input type="checkbox" id="altNameStyle" name="altNameStyle">
+        <label for="altNameStyle">Use alternate map name style (uppercase, smaller)</label>
+
+        <br>
+
+        <input type="checkbox" id="limitMapNameSize" name="limitMapNameSize" checked>
+        <label for="limitMapNameSize">Limit map name size</label>
+
+        <br>
+
+        <input type="checkbox" id="drawMapMiddle" name="drawMapMiddle" checked>
+        <label for="drawMapMiddle">Draw info in the center of the map</label>
+
+        <br>
+
+        <input type="checkbox" id="useHubble" name="useHubble" checked>
+        <label for="useHubble">Use the Hubble Deep Field (credit: NASA) as the background</label>
+
+        <br>
+
+        <input type="checkbox" id="lightBorders" name="lightBorders">
+        <label for="lightBorders">Light borders</label>
+
+        <br>
+
+        <input type="checkbox" id="smoothBorders" name="smoothBorders" checked>
+        <label for="smoothBorders">Rounder borders (good increase in quality, takes longer to generate)</label>
+    </div>
+
+    <fieldset>
+        <legend class="bold">Color Variants (all options reduce saturation below that of in-game colors)</legend>
+        <input type="radio" name="colorVariant" id="mapColorVariant" checked>
+        <label for="mapColorVariant">Map Shades</label>
+        <input type="radio" name="colorVariant" id="flagColorVariant">
+        <label for="flagColorVariant">Flag Shades</label>
+        <input type="radio" name="colorVariant" id="shipColorVariant">
+        <label for="shipColorVariant">Ship Shades</label>
+    </fieldset>
+
+    <fieldset>
+        <legend class="bold">Map Mode</legend>
+        <input type="radio" name="mapMode" id="normalMapMode" checked>
+        <label for="normalMapMode">Normal</label>
+        <input type="radio" name="mapMode" id="popMapMode">
+        <label for="popMapMode">Population</label>
+        <input type="radio" name="mapMode" id="militaryMapMode">
+        <label for="militaryMapMode">Military Power</label>
+        <input type="radio" name="mapMode" id="economyMapMode">
+        <label for="economyMapMode">Economic Output</label>
+        <input type="radio" name="mapMode" id="technologyMapMode">
+        <label for="technologyMapMode">Technology Level</label>
+        <input type="radio" name="mapMode" id="popDensityMapMode">
+        <label for="popDensityMapMode">Population Distribution</label>
+    </fieldset>
 
     
-    <input type="checkbox" id="greaterDesaturation" name="greaterDesaturation">
-    <label for="greaterDesaturation">Decrease saturation of colors even further</label>
 
-    <br>
+    <div id="sliderOptionsDiv">
+        <input type="range" min="200" max="500" value="325" class="slider" id="paintScale" name="paintScale" oninput="updatePaintScaleNumberDisplay()">
+        <span id="paintScaleNumberDisplay" class="big"></span>
+        <script>
+            document.getElementById('paintScaleNumberDisplay').innerHTML = ''+(document.getElementById('paintScale').value);
+        </script>
+        <br>
+        <label for="paintScale">Paint scale (higher values reduce the extent of borders drawn)</label>
 
-    <input type="checkbox" id="useFederationColors" name="useFederationColors">
-    <label for="useFederationColors">Use overlord and federation colors</label>
+        <br>
+
+        <input type="range" min="1" max="20" value="5" class="slider" id="popScale" name="popScale" oninput="updatePopScaleNumberDisplay()">
+        <span id="popScaleNumberDisplay" class="big"></span>
+        <script>
+            document.getElementById('popScaleNumberDisplay').innerHTML = ''+(document.getElementById('popScale').value);
+        </script>
+        <br>
+        <label for="popScale">1 Square = This many pops (Population Distribution map mode)</label>
+    </div>
+
+    <div id="nameOptionsDiv">
+        <label for="galaxyName">Name your galaxy: </label>
+        <input type="text" id="galaxyName" name="galaxyName">
+    </div>
+
+    <div id="warningsDiv">
+        <span class="warning">Warning: The maps generated do not include include the fog of war.</span>
+        <br>
+        <span class="warning">Since 3.4, empire names generated using name formats might not be calculated entirely correctly.</span>
+        <br>
+        <span class="warning">Since 3.4, pre-scripted empire names use the English localization.</span>
+        <br>
+        <span class="bold">On Windows, use Firefox for better map name rendering.</span>
+    </div>
+
+    <div id="drawMapButtonDiv">
+        <button onclick="drawMap(event)">Draw Map</button>
+        <span id="mapStatus"></span>
+    </div>
+
+    <div id="mapCanvasDiv">
+        <canvas id="galaxyMap"></canvas>
+    </div>
     
-    <br>
-
-    <input type="checkbox" id="drawMapNames" name="drawMapNames" checked>
-    <label for="drawMapNames">Draw country names on map</label>
-
-    <br>
-
-    <input type="checkbox" id="altNameStyle" name="altNameStyle">
-    <label for="altNameStyle">Use alternate map name style (uppercase, smaller)</label>
-
-    <br>
-
-    <input type="checkbox" id="limitMapNameSize" name="limitMapNameSize" checked>
-    <label for="limitMapNameSize">Limit map name size</label>
-
-    <br>
-
-    <input type="checkbox" id="drawMapMiddle" name="drawMapMiddle" checked>
-    <label for="drawMapMiddle">Draw info in the center of the map</label>
-
-    <br>
-
-    <input type="checkbox" id="useHubble" name="useHubble" checked>
-    <label for="useHubble">Use the Hubble Deep Field (credit: NASA) as the background</label>
-
-    <br>
-
-    <input type="checkbox" id="lightBorders" name="lightBorders">
-    <label for="lightBorders">Light borders</label>
-
-    <br>
-
-    <input type="checkbox" id="smoothBorders" name="smoothBorders" checked>
-    <label for="smoothBorders">Rounder borders (good increase in quality, takes longer to generate)</label>
-
-    <br>
-    <br>
-
-    <input type="range" min="200" max="500" value="325" class="slider" id="paintScale" name="paintScale" oninput="updatePaintScaleNumberDisplay()">
-    <span id="paintScaleNumberDisplay" class="big"></span>
-    <script>
-        document.getElementById('paintScaleNumberDisplay').innerHTML = ''+(document.getElementById('paintScale').value);
-    </script>
-    <br>
-    <label for="paintScale">Paint scale (higher values reduce the extent of borders drawn)</label>
-
-    <br>
-    <br>
-
-    <span class="bold">Color Variants (all options reduce saturation below that of in-game colors)</span>
-
-    <br>
-
-    <input type="radio" name="colorVariant" id="mapColorVariant" checked>
-    <label for="mapColorVariant">Map Shades</label>
-    <input type="radio" name="colorVariant" id="flagColorVariant">
-    <label for="flagColorVariant">Flag Shades</label>
-    <input type="radio" name="colorVariant" id="shipColorVariant">
-    <label for="shipColorVariant">Ship Shades</label>
-
-    <br>
-    <br>
-
-    <span class="bold">Map Mode</span>
-
-    <br>
-
-    <input type="radio" name="mapMode" id="normalMapMode" checked>
-    <label for="normalMapMode">Normal</label>
-    <input type="radio" name="mapMode" id="popMapMode">
-    <label for="popMapMode">Population</label>
-    <input type="radio" name="mapMode" id="militaryMapMode">
-    <label for="militaryMapMode">Military Power</label>
-    <input type="radio" name="mapMode" id="economyMapMode">
-    <label for="economyMapMode">Economic Output</label>
-    <input type="radio" name="mapMode" id="technologyMapMode">
-    <label for="technologyMapMode">Technology Level</label>
-    <input type="radio" name="mapMode" id="popDensityMapMode">
-    <label for="popDensityMapMode">Population Distribution</label>
-
-    <br>
-    <br>
-
-    <input type="range" min="1" max="20" value="5" class="slider" id="popScale" name="popScale" oninput="updatePopScaleNumberDisplay()">
-    <span id="popScaleNumberDisplay" class="big"></span>
-    <script>
-        document.getElementById('popScaleNumberDisplay').innerHTML = ''+(document.getElementById('popScale').value);
-    </script>
-    <br>
-    <label for="popScale">1 Square = This many pops (Population Distribution map mode)</label>
-
-    <br>
-    <br>
-    <br>
-
-    <label for="galaxyName">Name your galaxy: </label>
-    <input type="text" id="galaxyName" name="galaxyName">
-
-    <br>
-    <br>
-
-    <span class="warning">Warning: The maps generated do not include include the fog of war.</span>
-    <br>
-    <span class="warning">All randomly generated empire names using name formats (added in 3.4) will use the English localization of that format.</span>
-    <br>
-    <span class="bold">On Windows, use Firefox for better map name rendering.</span>
-
-    <br>
-    <br>
-
-    <button onclick="drawMap(event)">Generate Map</button>
-    <span id="mapStatus"></span>
-    
-    <br>
-    <br>
-
-    <canvas id="galaxyMap"></canvas>
-    
-    <canvas id="helperCanvas" style="display:none"></canvas>
-    <img id="backgroundImage" style="display:none" src="./HubbleDeepField.jpg">
+    <canvas id="helperCanvas" class="hidden"></canvas>
+    <img id="backgroundImage" class="hidden" src="./HubbleDeepField.jpg">
 
     <script src="jszip.js"></script>
     <script src="main.js"></script>

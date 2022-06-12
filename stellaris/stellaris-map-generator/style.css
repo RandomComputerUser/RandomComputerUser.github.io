@@ -1,29 +1,77 @@
+html {
+    font-size: 1.25rem;
+}
+
 html, body, input, button {
     font-family: "Barlow Semi Condensed", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-size: 1.1rem;
 
     background-color: #081828;
-    color: #d0d0d0;
+    color: #D0D0D0;
 }
 
-input[type="text"] {
-    background-color: #e8e8e8;
+div, fieldset {
+    margin-top: 1.25rem;
+    margin-bottom: 1.25rem;
+    margin-left: 0.35rem;
+    margin-right: 0.35rem;
+    padding-left: 0.75rem;
+    padding-top: 0.075rem;
+    padding-bottom: 0.175rem;
+    border-left: 2px solid #C0C0C0;
+}
+
+#mapCanvasDiv {
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-bottom: 3rem;
+}
+
+fieldset {
+    padding-left: 0.7rem;
+    padding-right: 0.7rem;
+    padding-top: 0.6rem;
+    padding-bottom: 1.3rem;
+    border: 2px solid #C0C0C0;
+    border-radius: 0;
+
+    width: fit-content;
+}
+
+legend {
+    font-size: 1.1rem;
+}
+
+.hidden {
+    display: none;
+}
+
+input[type="range"] {
+    width: min(75%, 40rem);
+}
+
+button, input[type="text"] {
+    background-color: #D0D0D0;
+    border-color: #A0A0A0;
+    border-radius: 0;
+    padding: 0.25rem;
+    margin-left: 0.08rem;
+    margin-right: 0.25rem;
+    margin-top: 0.25rem;
+    margin-bottom: 0.25rem;
     color: #081828;
-}
-
-.paintScale {
-    width: 35rem;
-}
-
-.popScale {
-    width: 20rem;
-}
-
-button {
-    background-color: #d0d0d0;
-    color: #081828;
-    font-weight: 700;
+    font-size: 1rem;
+    font-weight: 600;
     font-family: "Barlow", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+label {
+    margin-left: 0.05rem;
+    margin-right: 0.35rem;
+}
+
+h1 {
+    margin-left: 0.2rem;
+    font-weight: 500;
 }
 
 .bold {
@@ -40,7 +88,7 @@ button {
 
 .warning {
     font-weight: 500;
-    color: #ff0;
+    color: #FFFF00;
 }
 
 #dateInput {
@@ -50,4 +98,11 @@ button {
 #chart {
     display: inline-block;
     text-decoration: underline;
+}
+
+#galaxyMap {
+    padding: 0;
+    margin: 0;
+    width: min(200vw, 1024px);
+    height: min(200vw, 1024px);
 }
