@@ -894,11 +894,11 @@ function cepheus_getStarbaseOwners(gamestate) {
             if (fleet.ships.length <= 0) continue;
 
             if (name === '"Starbase"' || name === '"shipclass_starbase_name"') {
-                let starbaseId = +(stations.get(fleet.ships[0]));
-                if (starbaseId != null) {
-                    if (gamestate.starbase_mgr.starbases[starbaseId] != null) {
-                        gamestate.starbase_mgr.starbases[starbaseId].owner = +countryId;
-                    }
+                let starbaseId = stations.get(fleet.ships[0]);
+                if (starbaseId == null) continue;
+                starbaseId = +starbaseId;
+                if (gamestate.starbase_mgr.starbases[starbaseId] != null) {
+                    gamestate.starbase_mgr.starbases[starbaseId].owner = +countryId;
                 }
             }
         }
