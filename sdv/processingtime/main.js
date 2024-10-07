@@ -1,44 +1,51 @@
-MINUTES_IN_DAY = (20 * 60 + 4 * 100); // 100 minutes pass for each hour from 2 AM - 6 AM
+MINUTES_IN_DAY = 20 * 60 + 4 * 100; // 100 minutes pass for each hour from 2 AM - 6 AM
 MINUTES_AWAKE = 20 * 60;
 
 VALID_OBJECTS = new Set();
 
-(
-    function(){
-        let valid = [
-            'Mayonnaise Machine',
-            'Bee House',
-            'Preserves Jar',
-            'Cheese Press',
-            'Loom',
-            'Keg',
-            'Oil Maker',
-            'Cask',
+(function () {
+    let valid = [
+        "Bee House",
+        "Cask",
+        "Cheese Press",
+        "Keg",
+        "Loom",
+        "Mayonnaise Machine",
+        "Oil Maker",
+        "Preserves Jar",
+        "Fish Smoker",
+        "Dehydrator",
 
-            'Charcoal Kiln',
-            'Crystalarium',
-            'Furnace',
-            'Lightning Rod',
-            'Recycling Machine',
-            'Seed Maker',
-            'Slime Incubator',
-            'Slime Egg-Press',
-            'Tapper',
-            'Heavy Tapper',
-            'Worm Bin'
-        ];
-        for (let i = 0; i < valid.length; i++) {
-            VALID_OBJECTS.add(valid[i]);
-        }
+        "Charcoal Kiln",
+        "Crystalarium",
+        "Furnace",
+        "Heavy Furnace",
+        "Lightning Rod",
+        "Solar Panel",
+        "Recycling Machine",
+        "Seed Maker",
+        "Slime Incubator",
+        "Ostrich Incubator",
+        "Slime Egg-Press",
+        "Tapper",
+        "Heavy Tapper",
+        "Worm Bin",
+        "Deluxe Worm Bin",
+        "Bone Mill",
+        "Geode Crusher",
+        "Mushroom Log",
+        "Bait Maker",
+    ];
+    for (let i = 0; i < valid.length; i++) {
+        VALID_OBJECTS.add(valid[i]);
     }
-)();
-
+})();
 
 function openSave() {
     var reader = new FileReader();
     reader.onload = function () {
         analyzeData(reader.result);
-    }
+    };
 
     let file = document.getElementById("saveInput").files[0];
     document.getElementById("fileDisplay").innerHTML = file.name;
@@ -50,17 +57,17 @@ function analyzeData(data) {
     data = xmlToJson(parseXml(data));
 
     gameDate = 112 * (data.SaveGame.year - 1);
-    let season = (''+data.SaveGame.currentSeason).toLowerCase();
-    if (season === 'spring') {
+    let season = ("" + data.SaveGame.currentSeason).toLowerCase();
+    if (season === "spring") {
         gameDate += 0 * 28;
-    } else if (season === 'summer') {
+    } else if (season === "summer") {
         gameDate += 1 * 28;
-    } else if (season === 'fall') {
+    } else if (season === "fall") {
         gameDate += 2 * 28;
     } else {
         gameDate += 3 * 28;
     }
-    gameDate += (data.SaveGame.dayOfMonth - 1);
+    gameDate += data.SaveGame.dayOfMonth - 1;
 
     let objects = getAllObjects(data);
     // console.log(objects);
@@ -77,14 +84,13 @@ function analyzeData(data) {
     toProcess.sort(compareObjects);
 
     // console.log(toProcess);
-    
+
     dataToDisplay = generateSummary(toProcess, gameDate);
 
-    setDisplay(dataToDisplay, document.getElementById("mainDisplay"))
+    setDisplay(dataToDisplay, document.getElementById("mainDisplay"));
 }
 
 function getProcessingTime(obj, gameDate) {
-
     let contents = obj.heldObject;
     if (contents == null) return null;
     let objName = getName(obj);
@@ -105,30 +111,24 @@ function getProcessingTime(obj, gameDate) {
     }
 
     if (timeUntilReady % MINUTES_IN_DAY >= MINUTES_AWAKE) {
-        timeUntilReady = MINUTES_IN_DAY * Math.floor(timeUntilReady / MINUTES_IN_DAY) + MINUTES_AWAKE;
+        timeUntilReady =
+            MINUTES_IN_DAY * Math.floor(timeUntilReady / MINUTES_IN_DAY) + MINUTES_AWAKE;
     }
 
     return {
         name: objName,
         contents: contentsName,
-        time: timeUntilReady
+        time: timeUntilReady,
     };
-
 }
 
 function getDateString(currentDate, gameDate) {
-
     let year = Math.floor(currentDate / 112) + 1;
     currentDay = currentDate % 112;
-    let season = [
-        'Spring',
-        'Summer',
-        'Fall',
-        'Winter'
-    ][Math.floor(currentDay / 28)];
-    let day = currentDay % 28 + 1;
+    let season = ["Spring", "Summer", "Fall", "Winter"][Math.floor(currentDay / 28)];
+    let day = (currentDay % 28) + 1;
 
-    let extraString = '(today)';
+    let extraString = "(today)";
     if (currentDate > gameDate) {
         if (currentDate - gameDate === 1) {
             extraString = `(in 1 day)`;
@@ -144,7 +144,6 @@ function getDateString(currentDate, gameDate) {
     }
 
     return `${season} ${day}, Year ${year} ${extraString}`;
-
 }
 
 function getTimeString(time) {
@@ -152,21 +151,62 @@ function getTimeString(time) {
     time = Math.round(time / 10);
 
     if (time >= 20 * 6) {
-        return 'After 2:00 AM';
+        return "After 2:00 AM";
     }
 
-    let hour = ['6', '7', '8', '9', '10', '11', '12', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '1'][Math.floor(time / 6)];
-    let minute =  `${Math.min(time % 6, 5)}0`;
-    let ampm = ['A', 'A', 'A', 'A', 'A',  'A',  'P',  'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P', 'P',  'P',  'A',  'A'][Math.floor(time / 6)];
+    let hour = [
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "1",
+    ][Math.floor(time / 6)];
+    let minute = `${Math.min(time % 6, 5)}0`;
+    let ampm = [
+        "A",
+        "A",
+        "A",
+        "A",
+        "A",
+        "A",
+        "P",
+        "P",
+        "P",
+        "P",
+        "P",
+        "P",
+        "P",
+        "P",
+        "P",
+        "P",
+        "P",
+        "P",
+        "A",
+        "A",
+    ][Math.floor(time / 6)];
     return `${hour}:${minute} ${ampm}M`;
 }
 
 function compareObjects(a, b) {
-
     if (a.time < b.time) {
         return -1;
     }
-    
+
     if (a.time > b.time) {
         return 1;
     }
@@ -191,7 +231,6 @@ function getName(thing) {
 }
 
 function generateSummary(data, gameDate) {
-
     if (data.length < 1) {
         return [];
     }
@@ -204,11 +243,11 @@ function generateSummary(data, gameDate) {
     let currentDateOffset = Math.floor(data[0].time / MINUTES_IN_DAY);
 
     let currentSequence = {
-        name: '',
-        contents: '',
-        time: '',
-        number: 0
-    }; 
+        name: "",
+        contents: "",
+        time: "",
+        number: 0,
+    };
 
     for (let i = 0; i < data.length; i++) {
         let item = data[i];
@@ -222,17 +261,17 @@ function generateSummary(data, gameDate) {
             if (currentMinute.length > 0) {
                 currentDay.push({
                     titleSmall: getTimeString(currentTime),
-                    data: currentMinute
+                    data: currentMinute,
                 });
             }
             currentTime = item.time;
             currentMinute = [];
 
             currentSequence = {
-                name: '',
-                contents: '',
-                time: '',
-                number: 0
+                name: "",
+                contents: "",
+                time: "",
+                number: 0,
             };
         }
 
@@ -240,14 +279,18 @@ function generateSummary(data, gameDate) {
             if (currentDay.length > 0) {
                 summary.push({
                     title: getDateString(currentDateOffset + gameDate, gameDate),
-                    data: currentDay
+                    data: currentDay,
                 });
             }
             currentDateOffset = itemOffset;
             currentDay = [];
         }
 
-        if (item.name === currentSequence.name && item.contents === currentSequence.contents && item.time === currentSequence.time) {
+        if (
+            item.name === currentSequence.name &&
+            item.contents === currentSequence.contents &&
+            item.time === currentSequence.time
+        ) {
             currentSequence.number++;
         } else {
             if (currentSequence.number > 0) {
@@ -257,10 +300,9 @@ function generateSummary(data, gameDate) {
                 name: item.name,
                 contents: item.contents,
                 time: item.time,
-                number: 1
+                number: 1,
             };
         }
-
     }
 
     if (currentSequence.number > 0) {
@@ -269,82 +311,73 @@ function generateSummary(data, gameDate) {
     if (currentMinute.length > 0) {
         currentDay.push({
             titleSmall: getTimeString(currentTime),
-            data: currentMinute
+            data: currentMinute,
         });
     }
     if (currentDay.length > 0) {
         summary.push({
             title: getDateString(currentDateOffset + gameDate, gameDate),
-            data: currentDay
+            data: currentDay,
         });
     }
-    
+
     return summary;
 
     function sequenceToLine(seq) {
         return `<span style="font-weight:bold">${seq.number}x</span>&#09;${seq.name} (${seq.contents})<span>`;
     }
-
 }
 
 function setDisplay(data, displayEl) {
-    
-    displayEl.innerHTML = '';
+    displayEl.innerHTML = "";
 
     if (data.length < 1) {
-        displayEl.innerHTML = 'Nothing found';
+        displayEl.innerHTML = "Nothing found";
         return;
     }
 
-    if (typeof data[0] === 'string') {
-        let list = document.createElement('ul');
+    if (typeof data[0] === "string") {
+        let list = document.createElement("ul");
 
         for (let i = 0; i < data.length; i++) {
-            let item = document.createElement('li');
-            item.classList.add('disable-calt');
+            let item = document.createElement("li");
+            item.classList.add("disable-calt");
             item.innerHTML = data[i];
             list.appendChild(item);
         }
 
         displayEl.appendChild(list);
-
-    } else if (typeof data[0] === 'object' && !Array.isArray(data[0])) {
-
+    } else if (typeof data[0] === "object" && !Array.isArray(data[0])) {
         for (let i = 0; i < data.length; i++) {
-
             let item = data[i];
 
-            if (item.hasOwnProperty('title')) {
-                let header = document.createElement('h5');
+            if (item.hasOwnProperty("title")) {
+                let header = document.createElement("h5");
                 header.innerText = item.title;
                 displayEl.appendChild(header);
             }
 
-            if (item.hasOwnProperty('titleSmall')) {
-                let header = document.createElement('h6');
+            if (item.hasOwnProperty("titleSmall")) {
+                let header = document.createElement("h6");
                 header.innerText = item.titleSmall;
                 displayEl.appendChild(header);
             }
 
-            if (item.hasOwnProperty('data')) {
-                let contentEl = document.createElement('div');
-                contentEl.className = 'display';
+            if (item.hasOwnProperty("data")) {
+                let contentEl = document.createElement("div");
+                contentEl.className = "display";
                 setDisplay(item.data, contentEl);
                 displayEl.appendChild(contentEl);
             }
-
         }
-        
     }
-    
 }
 
 function parseXml(textData) {
-    return (new DOMParser()).parseFromString(textData, "text/xml");
+    return new DOMParser().parseFromString(textData, "text/xml");
 }
 
 function xmlToJson(xmlData) {
-
     if (xmlData.childNodes.length === 1 && xmlData.childNodes[0].nodeName === "#text") {
         const value = xmlData.childNodes[0].data;
 
@@ -373,12 +406,12 @@ function xmlToJson(xmlData) {
         } else if (Array.isArray(elements[name])) {
             elements[name].push(xmlToJson(node));
         } else {
-            elements[name] = [elements[name], xmlToJson(node)]
+            elements[name] = [elements[name], xmlToJson(node)];
         }
     }
 
     const elementNames = Object.keys(elements);
-    
+
     for (let i = 0; i < elementNames.length; i++) {
         child = elements[elementNames[i]];
         if (Array.isArray(child)) {
@@ -388,7 +421,11 @@ function xmlToJson(xmlData) {
                 var element = child[j];
                 if (typeof element === "object") {
                     var keys = Object.keys(element);
-                    if (keys.length !== 2 || (keys[0] !== "key" && keys[0] !== "value") || (keys[1] !== "key" && keys[1] !== "value")) {
+                    if (
+                        keys.length !== 2 ||
+                        (keys[0] !== "key" && keys[0] !== "value") ||
+                        (keys[1] !== "key" && keys[1] !== "value")
+                    ) {
                         isMap = false;
                         isObject = false;
                     } else if (typeof element.key === "object") {
@@ -419,18 +456,18 @@ function xmlToJson(xmlData) {
     if (elementNames.length === 1) {
         var name = elementNames[0];
         const primitiveNames = {
-            "boolean": true,
-            "float": true,
-            "int": true,
-            "number": true,
-            "string": true
-        }
+            boolean: true,
+            float: true,
+            int: true,
+            number: true,
+            string: true,
+        };
 
         const arrayNames = {
-            "ArrayOfBoolean": true,
-            "ArrayOfInt": true,
-            "item": true
-        }
+            ArrayOfBoolean: true,
+            ArrayOfInt: true,
+            item: true,
+        };
 
         if (primitiveNames[name] !== void 0 || arrayNames[name] !== void 0) {
             return elements[name];
@@ -438,11 +475,9 @@ function xmlToJson(xmlData) {
     }
 
     return elements;
-
 }
 
 function getAllObjects(data) {
-
     if (typeof data === "object" && data !== null) {
         var objects = [data];
         if (data instanceof Map) {
@@ -457,5 +492,4 @@ function getAllObjects(data) {
     } else {
         return [];
     }
-
 }
